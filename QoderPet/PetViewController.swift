@@ -58,7 +58,7 @@ class PetViewController: NSViewController {
     }
 
     private func setupSpriteSheet() {
-        spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 8, rows: 9)
+        spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 8, rows: 10)
     }
 
     // MARK: - 动画
@@ -222,7 +222,7 @@ class PetContainerView: NSView {
     func enterResizeMode() {
         guard let win = self.window else { return }
         isResizeMode = true
-        win.isMovable = false   // 防止 NSWindow 默认行为移动窗口
+        win.isMovable = false
         frameBeforeResize = win.frame
         petVC?.animationTimer?.invalidate()
         showHandles()
@@ -234,9 +234,9 @@ class PetContainerView: NSView {
         bar.onReset   = { [weak self] in self?.resetResize() }
         win.addChildWindow(bar, ordered: .above)
         controlBar = bar
+        win.makeFirstResponder(self)   // ← Esc 需要成为 first responder
         win.makeKeyAndOrderFront(nil)
 
-        // 全局鼠标监听：点击窗口外退出 resize 模式
         globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] _ in
             self?.confirmResize()
         }
@@ -268,8 +268,8 @@ class PetContainerView: NSView {
     func resetResize() {
         guard let win = self.window else { return }
         let h = defaultH, w = h * aspectRatio
-        let cx = win.frame.midX, cy = win.frame.midY
-        let f = CGRect(x: cx - w/2, y: cy - h/2, width: w, height: h)
+        // 底部左角锚定，只改尺寸
+        let f = CGRect(x: win.frame.origin.x, y: win.frame.origin.y, width: w, height: h)
         win.setFrame(f, display: true, animate: false)
         refreshHandlesAndBar()
     }
@@ -396,36 +396,24 @@ class PetContainerView: NSView {
         if isResizeMode && isResizeDragging {
             guard let win = self.window else { return }
             let cur = NSEvent.mouseLocation
-            // 把鼠标位移投影到 handle 方向（dir.x, dir.y = ±1 or 0）
-            // 向外拖（同方向）= 正 = 放大；向内拖 = 负 = 缩小
+
+            // 用 Y 轴位移（向上拖 = 放大，向下拖 = 缩小）
+            // 同时考虑 X 轴（向右拖也放大），取两者最大绝对值方向
             let dx = cur.x - resizeStartMouse.x
             let dy = cur.y - resizeStartMouse.y
-            let d = resizeHandleDir
-            // 投影量：考虑 x 和 y 分量各自的方向贡献
-            let proj: CGFloat
-            if d.x != 0 && d.y != 0 {
-                proj = (dx * d.x + dy * d.y) / sqrt(2)  // 对角 handle
-            } else if d.x != 0 {
-                proj = dx * d.x
+            let delta: CGFloat
+            if abs(dx) >= abs(dy) {
+                delta = dx   // 水平拖：向右放大
             } else {
-                proj = dy * d.y
+                delta = dy   // 垂直拖：向上放大
             }
 
-            let newH = max(minH, min(maxH, resizeStartH + proj))
+            let newH = max(minH, min(maxH, resizeStartH + delta))
             let newW = newH * aspectRatio
 
-            // 锚点：窗口中心不变
-            let cx = resizeStartOrigin.x + resizeStartH * aspectRatio / 2
-            let cy = resizeStartOrigin.y + resizeStartH / 2
-            var newOrigin = CGPoint(x: cx - newW/2, y: cy - newH/2)
-
-            // 屏幕边界约束
-            if let screen = NSScreen.main?.visibleFrame {
-                newOrigin.x = max(screen.minX, min(screen.maxX - newW, newOrigin.x))
-                newOrigin.y = max(screen.minY, min(screen.maxY - newH, newOrigin.y))
-            }
-
-            win.setFrame(CGRect(origin: newOrigin, size: CGSize(width: newW, height: newH)),
+            // 底部左角锚定，位置完全不动，只改宽高
+            let origin = resizeStartOrigin
+            win.setFrame(CGRect(x: origin.x, y: origin.y, width: newW, height: newH),
                         display: true, animate: false)
             refreshHandlesAndBar()
             return

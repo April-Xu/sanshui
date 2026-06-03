@@ -1,13 +1,15 @@
 import Foundation
 
-// Codex hatch-pet 标准 9 状态，行序固定
+// Codex hatch-pet 主状态保持原 9 状态不变，row 9 追加预留给 sunburn
 // Row 0: idle | 1: running-right | 2: running-left
 // Row 3: waving | 4: jumping | 5: failed
 // Row 6: waiting | 7: running | 8: review
-// Spritesheet 行对应关系（8列 × 9行，每格 192×208）
+// Row 9: sunburn (暂未接入状态机)
+// Spritesheet 行对应关系（8列 × 10行，每格 192×208）
 // Row 0: idle      Row 1: running-right  Row 2: running-left
 // Row 3: waving    Row 4: jumping        Row 5: failed
 // Row 6: waiting   Row 7: running        Row 8: review
+// Row 9: sunburn
 enum PetState: String, CaseIterable {
     case idle        // 待机 (row 0)
     case walking     // 漫步，内部用，实际切 row1/2

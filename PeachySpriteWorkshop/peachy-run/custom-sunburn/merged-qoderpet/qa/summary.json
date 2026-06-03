@@ -1,0 +1,36 @@
+{
+  "main_atlas": "/Users/miaojunxu/Documents/Claude/Projects/QoderPet/QoderPet/spritesheet.webp",
+  "sunburn_row": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/final/spritesheet.webp",
+  "output_png": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/final/spritesheet.png",
+  "output_webp": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/final/spritesheet.webp",
+  "contact_sheet": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/qa/contact-sheet.png",
+  "merged_size": [
+    1536,
+    2080
+  ],
+  "rows": [
+    "idle",
+    "running-right",
+    "running-left",
+    "waving",
+    "jumping",
+    "failed",
+    "waiting",
+    "running",
+    "review",
+    "sunburn"
+  ],
+  "used_counts": [
+    6,
+    8,
+    8,
+    4,
+    5,
+    8,
+    6,
+    6,
+    6,
+    8
+  ],
+  "sunburn_row_index": 9
+}
