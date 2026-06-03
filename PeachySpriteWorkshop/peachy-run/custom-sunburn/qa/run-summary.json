@@ -1,96 +1,36 @@
 {
-  "ok": true,
-  "source": "/Users/miaojunxu/.codex/generated_images/019e8c2b-7b1d-7bb3-9333-fbd4c54a916b/ig_09d9d20144951f68016a20323832d0819398273fe18a7631fc.png",
-  "decoded": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/decoded/sunburn.png",
-  "frame_count": 8,
-  "durations_ms": [
-    180,
-    180,
-    200,
+  "sunburn_sequence_labels": [
+    "open-jacket",
+    "remove-jacket",
+    "remove-jacket-hold",
+    "offer-jacket",
+    "offer-jacket-hold",
+    "relieved",
+    "relieved-smile",
+    "very-relieved"
+  ],
+  "gif_durations_ms": [
+    220,
     220,
     220,
     240,
-    260,
-    360
+    240,
+    280,
+    320,
+    420
   ],
-  "outputs": {
-    "sprite_png": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/final/spritesheet.png",
-    "sprite_webp": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/final/spritesheet.webp",
-    "contact_sheet": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/qa/sunburn-contact-sheet.png",
-    "gif": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/qa/previews/sunburn.gif"
-  },
-  "bbox_rows": [
-    {
-      "frame": 0,
-      "bbox": [
-        44,
-        5,
-        147,
-        203
-      ]
-    },
-    {
-      "frame": 1,
-      "bbox": [
-        47,
-        5,
-        144,
-        203
-      ]
-    },
-    {
-      "frame": 2,
-      "bbox": [
-        48,
-        5,
-        143,
-        203
-      ]
-    },
-    {
-      "frame": 3,
-      "bbox": [
-        48,
-        6,
-        143,
-        203
-      ]
-    },
-    {
-      "frame": 4,
-      "bbox": [
-        45,
-        5,
-        146,
-        203
-      ]
-    },
-    {
-      "frame": 5,
-      "bbox": [
-        48,
-        5,
-        143,
-        203
-      ]
-    },
-    {
-      "frame": 6,
-      "bbox": [
-        47,
-        5,
-        144,
-        203
-      ]
-    },
-    {
-      "frame": 7,
-      "bbox": [
-        46,
-        5,
-        145,
-        203
-      ]
-    }
+  "row_size": [
+    1536,
+    208
+  ],
+  "merged_size": [
+    1536,
+    2080
+  ],
+  "notes": [
+    "speech bubble removed from all frames",
+    "dropped old frame 00 from playback sequence",
+    "used 8-frame pacing with more time on jacket-removal and relieved ending",
+    "row 9 replaced in QoderPet main spritesheet"
   ]
 }

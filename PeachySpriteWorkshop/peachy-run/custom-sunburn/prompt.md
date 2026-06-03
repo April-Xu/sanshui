@@ -9,11 +9,11 @@ Identity lock: same Peachy in every frame: soft chibi sticker sprite, slightly s
 Global prop rule: a small cute sun stays visible in the upper-right corner of every frame. It should feel hot and summery but remain inside each frame slot and never overlap neighboring slots.
 
 Action story:
-frame 1: Peachy looks overheated and flushed, cheeks sunburn-red, cup gone, both hands grab the blue outer jacket near the collar or lapels as if starting to pull it off, speech bubble says “好热哦...”, sun at upper right;
-frame 2: Peachy pulls the jacket open wider with both hands, shoulders lifting from the heat, same hot expression, no fanning, same speech bubble, sun still at upper right;
-frame 3: Peachy actively takes the jacket off, one shoulder and more of the white tank top clearly showing, still hot and red-cheeked, no fanning, speech bubble may remain smaller or fading;
+frame 1: Peachy is flushed and overheated, cup gone, both hands already pulling open the blue outer jacket, clearly starting to remove it, no speech bubble, sun at upper right;
+frame 2: Peachy continues the jacket-removal action for another beat, pulling wider with both hands and lifting the shoulders from the heat, no fanning, no speech bubble;
+frame 3: Peachy actively takes the jacket off and exposes more of the white tank top, still red-cheeked and hot, no fanning, no speech bubble;
 frame 4: Peachy has fully removed the jacket and extends it toward the viewer or screen with one hand, now wearing only the white tank top on the upper body, expression beginning to recover but blush still obvious;
-frame 5: keep the jacket-off offering action for one more clear beat, arm slightly farther forward or pose slightly changed so the handoff reads better at pet size, no speech bubble;
+frame 5: keep the jacket-off offering action for one more clear beat, arm slightly farther forward or pose slightly changed so the handoff reads better at pet size;
 frame 6: the jacket has now been handed off and is completely gone from the frame, Peachy remains in the white tank top with a relieved refreshed expression and warm blush;
 frame 7: keep the cool relieved state for one more beat, more relaxed posture, visibly feeling better, jacket still gone, sun still present;
 frame 8: Peachy ends in a very爽 very relieved pose in the white tank top, no jacket visible anymore, expression fully comfortable and happy while keeping the sun-kissed blush and the sun at upper right.
@@ -29,6 +29,5 @@ Style and staging rules:
 - keep the offer-the-jacket action readable for two frames before it disappears
 - keep the relieved cooling-down ending readable for at least two frames
 - after frame 5, the jacket must disappear and never remain in the ending pose
-- the speech bubble text must be exactly: 好热哦...
-- the bubble should only appear in the overheated part of the sequence, not the final offering-jacket frames or ending frames
+- do not draw any speech bubble or dialogue text in any frame
 - no shadows, scenery, detached sparkles, speed lines, labels, watermarks, UI, or chroma-key colors inside the character

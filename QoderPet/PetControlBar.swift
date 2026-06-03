@@ -1,15 +1,15 @@
 import AppKit
 
-// MARK: - 像素风太阳按钮
+// MARK: - 像素风太阳按钮（无笑脸，纯太阳图标）
 
 class SunButton: NSView {
     var onClick: (() -> Void)?
     private var isHovered = false
+    private var isPressed = false
 
     override init(frame: NSRect) {
         super.init(frame: frame)
         wantsLayer = true
-        layer?.backgroundColor = NSColor.clear.cgColor
         addTrackingArea(NSTrackingArea(rect: bounds,
             options: [.activeAlways, .mouseEnteredAndExited, .inVisibleRect],
             owner: self, userInfo: nil))
@@ -17,69 +17,80 @@ class SunButton: NSView {
     required init?(coder: NSCoder) { fatalError() }
 
     override func draw(_ dirtyRect: NSRect) {
-        let cx = bounds.midX, cy = bounds.midY
-        let r: CGFloat = 7    // 太阳半径
-        let rayLen: CGFloat = 4
-        let rayCount = 8
+        let b = bounds
 
-        let sunColor = isHovered
-            ? NSColor(red: 1, green: 0.85, blue: 0, alpha: 1)
-            : NSColor(red: 1, green: 0.75, blue: 0.1, alpha: 1)
+        // 像素风按钮底色
+        let bgColor: NSColor = isPressed
+            ? NSColor(red: 0.12, green: 0.09, blue: 0.02, alpha: 0.95)
+            : (isHovered
+                ? NSColor(red: 0.28, green: 0.18, blue: 0.03, alpha: 0.95)
+                : NSColor(red: 0.16, green: 0.12, blue: 0.02, alpha: 0.88))
+        bgColor.setFill(); b.fill()
 
-        // 像素风射线（每条1px宽，向外延伸）
-        sunColor.setStroke()
-        for i in 0..<rayCount {
-            let angle = CGFloat(i) * .pi * 2 / CGFloat(rayCount)
-            let startX = cx + (r + 2) * cos(angle)
-            let startY = cy + (r + 2) * sin(angle)
-            let endX   = cx + (r + 2 + rayLen) * cos(angle)
-            let endY   = cy + (r + 2 + rayLen) * sin(angle)
-            let ray = NSBezierPath()
-            ray.move(to: NSPoint(x: startX, y: startY))
-            ray.line(to: NSPoint(x: endX, y: endY))
-            ray.lineWidth = 1.5
-            ray.stroke()
+        // 像素风边框（2层：亮边 + 暗边）
+        NSColor(red: 0.85, green: 0.62, blue: 0.1, alpha: 1).setStroke()
+        NSBezierPath(rect: b.insetBy(dx: 0.5, dy: 0.5)).lineWidth = 1
+
+        let outer = NSBezierPath(rect: b.insetBy(dx: 0.5, dy: 0.5))
+        outer.lineWidth = 1; outer.stroke()
+
+        // 内侧1px高光（左上角）
+        NSColor(red: 1, green: 0.9, blue: 0.4, alpha: 0.4).setStroke()
+        let hl = NSBezierPath()
+        hl.move(to: NSPoint(x: 1.5, y: b.height-1.5))
+        hl.line(to: NSPoint(x: 1.5, y: 1.5))
+        hl.line(to: NSPoint(x: b.width-1.5, y: 1.5))
+        hl.lineWidth = 1; hl.stroke()
+
+        // 画太阳：中心圆 + 8条射线
+        let cx = b.midX, cy = b.midY
+        let coreR: CGFloat = 3.5
+        let rayInner: CGFloat = coreR + 2.5
+        let rayOuter: CGFloat = coreR + 5.5
+
+        let sunColor = NSColor(red: 1, green: 0.82, blue: 0.1, alpha: 1)
+
+        // 射线（8条，像素风1.5px宽）
+        sunColor.withAlphaComponent(0.9).setStroke()
+        for i in 0..<8 {
+            let angle = CGFloat(i) * .pi / 4
+            let sx = cx + rayInner * cos(angle)
+            let sy = cy + rayInner * sin(angle)
+            let ex = cx + rayOuter * cos(angle)
+            let ey = cy + rayOuter * sin(angle)
+            let r = NSBezierPath()
+            r.move(to: NSPoint(x: sx, y: sy))
+            r.line(to: NSPoint(x: ex, y: ey))
+            r.lineWidth = 1.5; r.stroke()
         }
 
-        // 太阳圆形（填充 + 边框）
-        let circle = NSBezierPath(ovalIn: NSRect(x: cx-r, y: cy-r, width: r*2, height: r*2))
-        sunColor.setFill()
-        circle.fill()
-
-        // 像素风边框
-        NSColor(red: 0.7, green: 0.4, blue: 0, alpha: 1).setStroke()
-        circle.lineWidth = 1
-        circle.stroke()
-
-        // 小眼睛（像素点）
-        NSColor(red: 0.5, green: 0.25, blue: 0, alpha: 1).setFill()
-        NSBezierPath(ovalIn: NSRect(x: cx-3, y: cy-1, width: 2, height: 2)).fill()
-        NSBezierPath(ovalIn: NSRect(x: cx+1, y: cy-1, width: 2, height: 2)).fill()
-        // 笑嘴
-        let smile = NSBezierPath()
-        smile.move(to: NSPoint(x: cx-2.5, y: cy-3))
-        smile.curve(to: NSPoint(x: cx+2.5, y: cy-3),
-                    controlPoint1: NSPoint(x: cx-1, y: cy-5),
-                    controlPoint2: NSPoint(x: cx+1, y: cy-5))
-        smile.lineWidth = 1
-        NSColor(red: 0.5, green: 0.25, blue: 0, alpha: 1).setStroke()
-        smile.stroke()
+        // 太阳核心圆
+        let circle = NSBezierPath(ovalIn: NSRect(
+            x: cx - coreR, y: cy - coreR,
+            width: coreR*2, height: coreR*2))
+        sunColor.setFill(); circle.fill()
+        NSColor(red: 0.75, green: 0.45, blue: 0, alpha: 1).setStroke()
+        circle.lineWidth = 0.75; circle.stroke()
     }
 
     override func mouseEntered(with event: NSEvent) { isHovered = true;  needsDisplay = true }
-    override func mouseExited(with event: NSEvent)  { isHovered = false; needsDisplay = true }
-    override func mouseDown(with event: NSEvent)    { onClick?() }
+    override func mouseExited(with event: NSEvent)  { isHovered = false; isPressed = false; needsDisplay = true }
+    override func mouseDown(with event: NSEvent)    { isPressed = true;  needsDisplay = true }
+    override func mouseUp(with event: NSEvent) {
+        if isPressed { isPressed = false; needsDisplay = true; onClick?() }
+    }
 }
 
-// MARK: - 持久控制栏
+// MARK: - 持久控制栏（宠物右侧）
 
 class PetControlBar: NSPanel {
     weak var petVC: PetViewController?
     private var sunButton: SunButton?
 
     static func make(petVC: PetViewController) -> PetControlBar {
+        let size = NSSize(width: 26, height: 26)
         let bar = PetControlBar(
-            contentRect: NSRect(x: 0, y: 0, width: 30, height: 26),
+            contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered, defer: false)
         bar.isOpaque = false
@@ -93,53 +104,37 @@ class PetControlBar: NSPanel {
     }
 
     private func setupContent() {
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 30, height: 26))
-        container.wantsLayer = true
-        container.layer?.backgroundColor = NSColor.clear.cgColor
-        contentView = container
+        let v = NSView(frame: NSRect(x: 0, y: 0, width: 26, height: 26))
+        v.wantsLayer = true
+        v.layer?.backgroundColor = NSColor.clear.cgColor
+        contentView = v
 
-        // 像素风背景小框
-        let bg = PixelBgView(frame: container.bounds)
-        container.addSubview(bg)
-
-        // 太阳按钮
-        let sun = SunButton(frame: NSRect(x: 5, y: 5, width: 20, height: 16))
+        let sun = SunButton(frame: NSRect(x: 0, y: 0, width: 26, height: 26))
         sun.onClick = { [weak self] in self?.triggerSunburn() }
-        container.addSubview(sun)
+        v.addSubview(sun)
         sunButton = sun
     }
 
-    func positionBelow(_ petWindow: NSWindow) {
-        guard let screen = NSScreen.main?.visibleFrame else { return }
-        var x = petWindow.frame.midX - frame.width / 2
-        var y = petWindow.frame.minY - frame.height - 4
-        // 不要掉出屏幕
-        x = max(screen.minX, min(screen.maxX - frame.width, x))
-        if y < screen.minY { y = petWindow.frame.maxY + 4 }
+    /// 定位到宠物窗口右侧中央
+    func positionRight(of petWindow: NSWindow) {
+        let pf = petWindow.frame
+        let gap: CGFloat = 6
+        var x = pf.maxX + gap
+        var y = pf.midY - frame.height / 2
+
+        if let screen = NSScreen.main?.visibleFrame {
+            if x + frame.width > screen.maxX { x = pf.minX - frame.width - gap }
+            y = max(screen.minY, min(screen.maxY - frame.height, y))
+        }
         setFrameOrigin(NSPoint(x: x, y: y))
     }
 
     private func triggerSunburn() {
-        // 隐藏按钮
         sunButton?.isHidden = true
         let prevState = petVC?.currentState ?? .idle
         petVC?.playOnce(state: .sunburn) { [weak self] in
-            // 播完恢复，显示按钮
             self?.petVC?.startAnimation(for: prevState)
             self?.sunButton?.isHidden = false
         }
-    }
-}
-
-// MARK: - 像素风背景
-
-private class PixelBgView: NSView {
-    override func draw(_ dirtyRect: NSRect) {
-        // 半透明深色背景 + 白色1px边框
-        NSColor(white: 0.1, alpha: 0.7).setFill()
-        bounds.fill()
-        NSColor.white.withAlphaComponent(0.5).setStroke()
-        let p = NSBezierPath(rect: bounds.insetBy(dx: 0.5, dy: 0.5))
-        p.lineWidth = 1; p.stroke()
     }
 }

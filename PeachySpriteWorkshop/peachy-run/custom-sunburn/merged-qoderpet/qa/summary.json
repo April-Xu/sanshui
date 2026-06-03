@@ -1,36 +1,36 @@
 {
-  "main_atlas": "/Users/miaojunxu/Documents/Claude/Projects/QoderPet/QoderPet/spritesheet.webp",
-  "sunburn_row": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/final/spritesheet.webp",
-  "output_png": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/final/spritesheet.png",
-  "output_webp": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/final/spritesheet.webp",
-  "contact_sheet": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/custom-sunburn/merged-qoderpet/qa/contact-sheet.png",
+  "sunburn_sequence_labels": [
+    "open-jacket",
+    "remove-jacket",
+    "remove-jacket-hold",
+    "offer-jacket",
+    "offer-jacket-hold",
+    "relieved",
+    "relieved-smile",
+    "very-relieved"
+  ],
+  "gif_durations_ms": [
+    220,
+    220,
+    220,
+    240,
+    240,
+    280,
+    320,
+    420
+  ],
+  "row_size": [
+    1536,
+    208
+  ],
   "merged_size": [
     1536,
     2080
   ],
-  "rows": [
-    "idle",
-    "running-right",
-    "running-left",
-    "waving",
-    "jumping",
-    "failed",
-    "waiting",
-    "running",
-    "review",
-    "sunburn"
-  ],
-  "used_counts": [
-    6,
-    8,
-    8,
-    4,
-    5,
-    8,
-    6,
-    6,
-    6,
-    8
-  ],
-  "sunburn_row_index": 9
+  "notes": [
+    "speech bubble removed from all frames",
+    "dropped old frame 00 from playback sequence",
+    "used 8-frame pacing with more time on jacket-removal and relieved ending",
+    "row 9 replaced in QoderPet main spritesheet"
+  ]
 }

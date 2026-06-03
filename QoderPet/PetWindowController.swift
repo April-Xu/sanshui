@@ -34,13 +34,21 @@ class PetWindowController: NSWindowController {
         petViewController = vc
         window.contentViewController = vc
 
-        // 持久控制栏（太阳按钮等）
+        // 持久控制栏（太阳按钮等），放宠物右侧
         DispatchQueue.main.async { [weak self] in
             guard let self, let vc = self.petViewController else { return }
             let bar = PetControlBar.make(petVC: vc)
-            bar.positionBelow(window)
+            bar.positionRight(of: window)
             window.addChildWindow(bar, ordered: .above)
             self.controlBar = bar
+
+            // 监听窗口 resize，保持控制栏贴在右侧
+            NotificationCenter.default.addObserver(
+                forName: NSWindow.didResizeNotification,
+                object: window, queue: .main) { [weak bar, weak window] _ in
+                guard let bar = bar, let w = window else { return }
+                bar.positionRight(of: w)
+            }
         }
     }
 }

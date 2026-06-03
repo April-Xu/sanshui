@@ -206,10 +206,10 @@ class PetContainerView: NSView {
 
     private(set) var isResizeMode = false
     private var isResizeDragging = false
-    private var resizeStartMouse: CGPoint = .zero   // 屏幕坐标
+    private var resizeStartMouse: CGPoint = .zero
     private var resizeStartH: CGFloat = 0
-    private var resizeStartOrigin: CGPoint = .zero  // 窗口左下角（屏幕坐标）
-    private var resizeHandleDir: CGPoint = .zero    // 拖拽方向向量（±1）
+    private var resizeStartCX: CGFloat = 0   // 窗口中心 X（屏幕坐标，直接记录避免浮点累积）
+    private var resizeStartCY: CGFloat = 0   // 窗口中心 Y
     private var handleOverlay: HandleOverlayView?
     private var controlBar: ResizeControlBar? = nil
     private var frameBeforeResize: NSRect = .zero
@@ -268,8 +268,9 @@ class PetContainerView: NSView {
     func resetResize() {
         guard let win = self.window else { return }
         let h = defaultH, w = h * aspectRatio
-        // 底部左角锚定，只改尺寸
-        let f = CGRect(x: win.frame.origin.x, y: win.frame.origin.y, width: w, height: h)
+        // 中心锚定
+        let cx = win.frame.midX, cy = win.frame.midY
+        let f = CGRect(x: cx - w/2, y: cy - h/2, width: w, height: h)
         win.setFrame(f, display: true, animate: false)
         refreshHandlesAndBar()
     }
@@ -370,11 +371,11 @@ class PetContainerView: NSView {
 
     override func mouseDown(with event: NSEvent) {
         if isResizeMode {
-            // resize mode：整个视图都是 resize 区，直接开始
             isResizeDragging = true
             resizeStartMouse = NSEvent.mouseLocation
-            resizeStartH      = window?.frame.height ?? defaultH
-            resizeStartOrigin = window?.frame.origin ?? .zero
+            resizeStartH  = window?.frame.height ?? defaultH
+            resizeStartCX = window?.frame.midX ?? 0   // 直接记中心，无需推算
+            resizeStartCY = window?.frame.midY ?? 0
             NSCursor.crosshair.set()
             return
         }
@@ -394,11 +395,9 @@ class PetContainerView: NSView {
             let newH = max(minH, min(maxH, resizeStartH + delta))
             let newW = newH * aspectRatio
 
-            // 中心锚定：resize 不改变宠物视觉中心位置
-            let cx = resizeStartOrigin.x + (resizeStartH * aspectRatio) / 2
-            let cy = resizeStartOrigin.y + resizeStartH / 2
-            let newOriginX = cx - newW / 2
-            let newOriginY = cy - newH / 2
+            // 中心锚定：直接用记录的中心坐标，零浮点累积
+            let newOriginX = resizeStartCX - newW / 2
+            let newOriginY = resizeStartCY - newH / 2
 
             win.setFrame(CGRect(x: newOriginX, y: newOriginY, width: newW, height: newH),
                         display: true, animate: false)
