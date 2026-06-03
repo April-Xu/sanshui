@@ -8,8 +8,8 @@ class PetWindowController: NSWindowController {
         // 放到屏幕右下角，Dock 上方
         let screenFrame = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
         // 精灵格子比例 192:208 ≈ 0.923，窗口按此比例设置
-        let petW: CGFloat = 52
-        let petH: CGFloat = 56
+        let petH: CGFloat = 149
+        let petW: CGFloat = petH * (192.0 / 208.0)
         // Dock 右侧上方，稍微离 Dock 远一点
         let initX = screenFrame.maxX - petW - 200
         let initY = screenFrame.minY + 160

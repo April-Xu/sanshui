@@ -216,51 +216,44 @@ class PetContainerView: NSView {
 
     @objc private func showResizeSlider() {
         guard let win = self.window else { return }
-        let currentH = win.frame.height
+        let startH  = win.frame.height
+        let startCX = win.frame.midX
+        let startCY = win.frame.midY
 
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 240, height: 44))
+        // 用 helper 做 target/action（KVO 在 modal run loop 里不稳定）
+        let helper = SliderHelper(window: win)
 
-        let slider = NSSlider(frame: NSRect(x: 0, y: 22, width: 240, height: 20))
-        slider.minValue = 16; slider.maxValue = 88
-        slider.doubleValue = Double(currentH)
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 240, height: 50))
+
+        let slider = NSSlider(frame: NSRect(x: 8, y: 26, width: 224, height: 20))
+        slider.minValue = 16; slider.maxValue = 200
+        slider.doubleValue = Double(startH)
         slider.isContinuous = true
+        slider.target = helper
+        slider.action = #selector(SliderHelper.sliderMoved(_:))
 
-        let label = NSTextField(labelWithString: "\(Int(currentH)) px")
-        label.frame = NSRect(x: 90, y: 2, width: 60, height: 18)
+        let label = NSTextField(labelWithString: "\(Int(startH)) px")
+        label.frame = NSRect(x: 90, y: 4, width: 60, height: 18)
         label.alignment = .center
         label.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
-
-        // 实时预览
-        var liveH = currentH
-        slider.target = nil
-        slider.action = nil
-        let obs = slider.observe(\.doubleValue, options: .new) { [weak win, weak label] s, _ in
-            let h = CGFloat(s.doubleValue)
-            liveH = h
-            let w = h * (192.0/208.0)
-            let cx = win?.frame.midX ?? 0, cy = win?.frame.midY ?? 0
-            win?.setFrame(CGRect(x: cx-w/2, y: cy-h/2, width: w, height: h),
-                         display: true, animate: false)
-            label?.stringValue = "\(Int(h)) px"
-        }
+        helper.label = label
 
         container.addSubview(slider)
         container.addSubview(label)
 
         let alert = NSAlert()
         alert.messageText = "调整大小"
+        alert.informativeText = "拖动滑块实时预览（16 – 200 px）"
         alert.accessoryView = container
         alert.addButton(withTitle: "确定")
         alert.addButton(withTitle: "取消")
 
         let response = alert.runModal()
-        _ = obs  // 保持观察者活跃直到 alert 结束
+        _ = helper  // 保持引用到 runModal 结束
 
         if response != .alertFirstButtonReturn {
-            // 取消：还原
-            let w = currentH * (192.0/208.0)
-            let cx = win.frame.midX, cy = win.frame.midY
-            win.setFrame(CGRect(x: cx-w/2, y: cy-currentH/2, width: w, height: currentH),
+            let w = startH * (192.0/208.0)
+            win.setFrame(CGRect(x: startCX-w/2, y: startCY-startH/2, width: w, height: startH),
                         display: true, animate: false)
         }
     }
@@ -278,7 +271,6 @@ class PetContainerView: NSView {
         guard let petVC else { return }
         let cur = NSEvent.mouseLocation
         let dx = cur.x - mouseDownPos.x
-
         if !petVC.isDragging {
             let dy = cur.y - mouseDownPos.y
             if sqrt(dx*dx + dy*dy) > dragThreshold {
@@ -309,5 +301,31 @@ class PetContainerView: NSView {
         f.origin.y = max(screen.minY - f.height + screenMargin,
                     min(screen.maxY - screenMargin, f.origin.y))
         if f.origin != window.frame.origin { window.setFrameOrigin(f.origin) }
+    }
+}
+
+// MARK: - 滑块 Helper
+
+private class SliderHelper: NSObject {
+    weak var window: NSWindow?
+    weak var label: NSTextField?
+    private let ratio: CGFloat = 192.0 / 208.0
+    private var lastCX: CGFloat = 0
+    private var lastCY: CGFloat = 0
+
+    init(window: NSWindow) {
+        self.window = window
+        self.lastCX = window.frame.midX
+        self.lastCY = window.frame.midY
+    }
+
+    @objc func sliderMoved(_ sender: NSSlider) {
+        guard let win = window else { return }
+        let h = CGFloat(sender.doubleValue)
+        let w = h * ratio
+        // 用初始中心锚定，避免每次都从新 midX/midY 算（会累积偏移）
+        win.setFrame(CGRect(x: lastCX - w/2, y: lastCY - h/2, width: w, height: h),
+                    display: true, animate: false)
+        label?.stringValue = "\(Int(h)) px"
     }
 }
