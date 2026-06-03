@@ -1,4 +1,5 @@
 {
+  "selected_source": "/Users/miaojunxu/.codex/generated_images/019e8c2b-7b1d-7bb3-9333-fbd4c54a916b/ig_0d6cef1a84014716016a203e59ff3c819b93010bff4a40d98d.png",
   "sunburn_sequence_labels": [
     "open-jacket",
     "remove-jacket",
@@ -19,18 +20,11 @@
     320,
     420
   ],
-  "row_size": [
-    1536,
-    208
-  ],
-  "merged_size": [
-    1536,
-    2080
-  ],
   "notes": [
     "speech bubble removed from all frames",
-    "dropped old frame 00 from playback sequence",
-    "used 8-frame pacing with more time on jacket-removal and relieved ending",
-    "row 9 replaced in QoderPet main spritesheet"
+    "no fanning frames in the final sequence",
+    "jacket-removal and relieved ending both hold longer",
+    "QoderPet main spritesheet row 9 updated in place",
+    "top 9 rows remain unchanged"
   ]
 }
