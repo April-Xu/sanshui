@@ -216,46 +216,7 @@ class PetContainerView: NSView {
 
     @objc private func showResizeSlider() {
         guard let win = self.window else { return }
-        let startH  = win.frame.height
-        let startCX = win.frame.midX
-        let startCY = win.frame.midY
-
-        // 用 helper 做 target/action（KVO 在 modal run loop 里不稳定）
-        let helper = SliderHelper(window: win)
-
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 240, height: 50))
-
-        let slider = NSSlider(frame: NSRect(x: 8, y: 26, width: 224, height: 20))
-        slider.minValue = 16; slider.maxValue = 200
-        slider.doubleValue = Double(startH)
-        slider.isContinuous = true
-        slider.target = helper
-        slider.action = #selector(SliderHelper.sliderMoved(_:))
-
-        let label = NSTextField(labelWithString: "\(Int(startH)) px")
-        label.frame = NSRect(x: 90, y: 4, width: 60, height: 18)
-        label.alignment = .center
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
-        helper.label = label
-
-        container.addSubview(slider)
-        container.addSubview(label)
-
-        let alert = NSAlert()
-        alert.messageText = "调整大小"
-        alert.informativeText = "拖动滑块实时预览（16 – 200 px）"
-        alert.accessoryView = container
-        alert.addButton(withTitle: "确定")
-        alert.addButton(withTitle: "取消")
-
-        let response = alert.runModal()
-        _ = helper  // 保持引用到 runModal 结束
-
-        if response != .alertFirstButtonReturn {
-            let w = startH * (192.0/208.0)
-            win.setFrame(CGRect(x: startCX-w/2, y: startCY-startH/2, width: w, height: startH),
-                        display: true, animate: false)
-        }
+        SizePanel.show(for: win)
     }
 
     @objc private func quit() { NSApplication.shared.terminate(nil) }
@@ -304,28 +265,89 @@ class PetContainerView: NSView {
     }
 }
 
-// MARK: - 滑块 Helper
+// MARK: - 非模态尺寸调整面板
 
-private class SliderHelper: NSObject {
-    weak var window: NSWindow?
-    weak var label: NSTextField?
+class SizePanel: NSPanel {
+    private static var current: SizePanel?
+
+    private weak var petWindow: NSWindow?
+    private var startH: CGFloat = 0
+    private var startCX: CGFloat = 0
+    private var startCY: CGFloat = 0
     private let ratio: CGFloat = 192.0 / 208.0
-    private var lastCX: CGFloat = 0
-    private var lastCY: CGFloat = 0
 
-    init(window: NSWindow) {
-        self.window = window
-        self.lastCX = window.frame.midX
-        self.lastCY = window.frame.midY
+    static func show(for petWindow: NSWindow) {
+        current?.orderOut(nil)
+        current = nil
+        let p = SizePanel(petWindow: petWindow)
+        current = p
+        p.makeKeyAndOrderFront(nil)
     }
 
-    @objc func sliderMoved(_ sender: NSSlider) {
-        guard let win = window else { return }
+    init(petWindow: NSWindow) {
+        self.petWindow = petWindow
+        self.startH  = petWindow.frame.height
+        self.startCX = petWindow.frame.midX
+        self.startCY = petWindow.frame.midY
+
+        let w: CGFloat = 220, h: CGFloat = 72
+        // 面板放在宠物正上方
+        let px = petWindow.frame.midX - w/2
+        let py = petWindow.frame.maxY + 8
+        super.init(contentRect: NSRect(x: px, y: py, width: w, height: h),
+                   styleMask: [.titled, .closable, .nonactivatingPanel],
+                   backing: .buffered, defer: false)
+        self.title = "调整大小"
+        self.level = .floating
+        self.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        self.isMovableByWindowBackground = true
+        buildUI()
+    }
+
+    private func buildUI() {
+        guard let cv = contentView else { return }
+
+        let slider = NSSlider(frame: NSRect(x: 12, y: 36, width: 196, height: 20))
+        slider.minValue = 16; slider.maxValue = 200
+        slider.doubleValue = Double(startH)
+        slider.isContinuous = true
+        slider.target = self
+        slider.action = #selector(sliderMoved(_:))
+        cv.addSubview(slider)
+
+        let label = NSTextField(labelWithString: "\(Int(startH)) px")
+        label.frame = NSRect(x: 80, y: 14, width: 60, height: 16)
+        label.alignment = .center
+        label.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
+        label.tag = 1
+        cv.addSubview(label)
+
+        let ok = NSButton(title: "确定", target: self, action: #selector(confirm))
+        ok.frame = NSRect(x: 120, y: 10, width: 42, height: 20)
+        ok.bezelStyle = .rounded
+        cv.addSubview(ok)
+
+        let cancel = NSButton(title: "取消", target: self, action: #selector(revert))
+        cancel.frame = NSRect(x: 166, y: 10, width: 42, height: 20)
+        cancel.bezelStyle = .rounded
+        cv.addSubview(cancel)
+    }
+
+    @objc private func sliderMoved(_ sender: NSSlider) {
+        guard let win = petWindow else { return }
         let h = CGFloat(sender.doubleValue)
         let w = h * ratio
-        // 用初始中心锚定，避免每次都从新 midX/midY 算（会累积偏移）
-        win.setFrame(CGRect(x: lastCX - w/2, y: lastCY - h/2, width: w, height: h),
+        win.setFrame(CGRect(x: startCX - w/2, y: startCY - h/2, width: w, height: h),
                     display: true, animate: false)
-        label?.stringValue = "\(Int(h)) px"
+        (contentView?.viewWithTag(1) as? NSTextField)?.stringValue = "\(Int(h)) px"
+    }
+
+    @objc private func confirm() { SizePanel.current = nil; orderOut(nil) }
+
+    @objc private func revert() {
+        let w = startH * ratio
+        petWindow?.setFrame(CGRect(x: startCX-w/2, y: startCY-startH/2, width: w, height: startH),
+                           display: true, animate: false)
+        SizePanel.current = nil; orderOut(nil)
     }
 }

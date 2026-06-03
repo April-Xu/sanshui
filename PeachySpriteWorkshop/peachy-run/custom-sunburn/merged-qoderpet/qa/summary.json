@@ -1,30 +1,184 @@
 {
-  "selected_source": "/Users/miaojunxu/.codex/generated_images/019e8c2b-7b1d-7bb3-9333-fbd4c54a916b/ig_0d6cef1a84014716016a203e59ff3c819b93010bff4a40d98d.png",
-  "sunburn_sequence_labels": [
-    "open-jacket",
-    "remove-jacket",
-    "remove-jacket-hold",
-    "offer-jacket",
-    "offer-jacket-hold",
-    "relieved",
-    "relieved-smile",
-    "very-relieved"
-  ],
-  "gif_durations_ms": [
-    220,
-    220,
-    220,
-    240,
-    240,
-    280,
-    320,
-    420
+  "target_body_height": 194,
+  "sun_position": {
+    "left": 127,
+    "top": 22,
+    "size": 31
+  },
+  "metrics": [
+    {
+      "frame": 0,
+      "bbox": [
+        38,
+        9,
+        157,
+        203
+      ],
+      "body_size": [
+        93,
+        194
+      ],
+      "sun_size": [
+        30,
+        31
+      ],
+      "body_left_top": [
+        38,
+        9
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        36,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        97,
+        194
+      ],
+      "sun_size": [
+        31,
+        31
+      ],
+      "body_left_top": [
+        36,
+        9
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        38,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        91,
+        194
+      ],
+      "sun_size": [
+        31,
+        31
+      ],
+      "body_left_top": [
+        38,
+        9
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        38,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        92,
+        194
+      ],
+      "sun_size": [
+        31,
+        29
+      ],
+      "body_left_top": [
+        38,
+        9
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        40,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        89,
+        194
+      ],
+      "sun_size": [
+        31,
+        31
+      ],
+      "body_left_top": [
+        40,
+        9
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        40,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        88,
+        194
+      ],
+      "sun_size": [
+        31,
+        30
+      ],
+      "body_left_top": [
+        40,
+        9
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        38,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        91,
+        194
+      ],
+      "sun_size": [
+        31,
+        30
+      ],
+      "body_left_top": [
+        38,
+        9
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        38,
+        9,
+        158,
+        203
+      ],
+      "body_size": [
+        91,
+        194
+      ],
+      "sun_size": [
+        31,
+        30
+      ],
+      "body_left_top": [
+        38,
+        9
+      ]
+    }
   ],
   "notes": [
-    "speech bubble removed from all frames",
-    "no fanning frames in the final sequence",
-    "jacket-removal and relieved ending both hold longer",
-    "QoderPet main spritesheet row 9 updated in place",
+    "sunburn body resized independently from sun",
+    "sun moved to the right side of the head so it no longer drives character scaling",
+    "main atlas row 9 updated in place",
     "top 9 rows remain unchanged"
   ]
 }
