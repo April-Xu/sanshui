@@ -42,7 +42,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
 
         // 显示/隐藏
-        menu.addItem(withTitle: "显示 / 隐藏 Peachy", action: #selector(togglePet), keyEquivalent: "")
+        menu.addItem(withTitle: "显示 / 隐藏 Sanshui", action: #selector(togglePet), keyEquivalent: "")
             .target = self
 
         menu.addItem(.separator())

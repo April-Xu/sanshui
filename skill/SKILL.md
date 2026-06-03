@@ -106,7 +106,7 @@ rm -rf "$WORK_DIR"
 
 ### 10. Confirm success
 
-Tell the user: "Sanshui 已安装并启动！Peachy 出现在屏幕右下角。右键 Peachy 可退出。"
+Tell the user: "Sanshui 已安装并启动！Sanshui 出现在屏幕右下角。右键 Sanshui 可退出。"
 
 ---
 
