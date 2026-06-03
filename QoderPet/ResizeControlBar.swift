@@ -61,7 +61,10 @@ class HandleOverlayView: NSView {
         return -1
     }
 
-    override var isFlipped: Bool { false }   // NSView 默认 y=0 在底部
+    override var isFlipped: Bool { false }
+
+    // 事件穿透：所有鼠标事件由 superview (PetContainerView) 处理
+    override func hitTest(_ point: NSPoint) -> NSView? { return nil }
 
     override func draw(_ dirtyRect: NSRect) {
         // 白色虚线边框

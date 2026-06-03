@@ -178,7 +178,7 @@ class PetViewController: NSViewController {
 class PetContainerView: NSView {
     weak var petVC: PetViewController?
 
-    // 移动拖拽
+    // 普通拖拽
     private var mouseDownPos: CGPoint = .zero
     private var lastDragDirection: Int = 0
     private let dragThreshold: CGFloat = 5
@@ -187,58 +187,79 @@ class PetContainerView: NSView {
     private let minH: CGFloat = 16
     private let maxH: CGFloat = 88
     private let aspectRatio: CGFloat = 192.0 / 208.0
+    private let defaultH: CGFloat = 56
     private let screenMargin: CGFloat = 16
+    private let handleZone: CGFloat = 10   // 边缘几px内算 handle
 
     private(set) var isResizeMode = false
-    private var resizingHandle: Int = -1
-    private var resizeStartMouse: CGPoint = .zero
-    private var resizeStartFrame: NSRect = .zero
+    private var isResizeDragging = false
+    private var resizeStartMouse: CGPoint = .zero   // 屏幕坐标
+    private var resizeStartH: CGFloat = 0
+    private var resizeStartOrigin: CGPoint = .zero  // 窗口左下角（屏幕坐标）
+    private var resizeHandleDir: CGPoint = .zero    // 拖拽方向向量（±1）
     private var handleOverlay: HandleOverlayView?
     private var controlBar: ResizeControlBar? = nil
     private var frameBeforeResize: NSRect = .zero
-    private let defaultH: CGFloat = 56
+    private var globalMouseMonitor: Any?
 
-    // handle 归一化位置（与 HandleOverlayView.positions 一致）
-    private let handlePositions: [(CGFloat, CGFloat)] = [
-        (0, 0), (0.5, 0), (1, 0),
-        (0, 0.5),          (1, 0.5),
-        (0, 1), (0.5, 1), (1, 1),
-    ]
+    // MARK: - Handle hit（直接在 PetContainerView 坐标里算，不依赖子视图）
+    // 返回方向向量：拖向该方向应该放大
+    private func handleDirAt(_ loc: NSPoint) -> CGPoint? {
+        let w = bounds.width, h = bounds.height, z = handleZone
+        let inLeft   = loc.x < z
+        let inRight  = loc.x > w - z
+        let inBottom = loc.y < z
+        let inTop    = loc.y > h - z
+        guard inLeft || inRight || inBottom || inTop else { return nil }
+        // dir = 鼠标向哪个方向拖会让窗口变大
+        let dx: CGFloat = inLeft ? -1 : (inRight ? 1 : 0)
+        let dy: CGFloat = inBottom ? -1 : (inTop ? 1 : 0)
+        return CGPoint(x: dx, y: dy)
+    }
 
     // MARK: - Resize 模式开关
 
     func enterResizeMode() {
         guard let win = self.window else { return }
         isResizeMode = true
+        win.isMovable = false   // 防止 NSWindow 默认行为移动窗口
         frameBeforeResize = win.frame
         petVC?.animationTimer?.invalidate()
         showHandles()
 
-        // 控制栏
         let bar = ResizeControlBar.makeBar()
-        bar.position(below: win)
+        positionControlBar(bar, relativeTo: win)
         bar.onConfirm = { [weak self] in self?.confirmResize() }
         bar.onCancel  = { [weak self] in self?.cancelResize() }
         bar.onReset   = { [weak self] in self?.resetResize() }
         win.addChildWindow(bar, ordered: .above)
         controlBar = bar
-        bar.makeKeyAndOrderFront(nil)
         win.makeKeyAndOrderFront(nil)
+
+        // 全局鼠标监听：点击窗口外退出 resize 模式
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] _ in
+            self?.confirmResize()
+        }
     }
 
     func confirmResize() {
+        guard isResizeMode else { return }
         isResizeMode = false
+        window?.isMovable = true
         hideHandles()
         detachControlBar()
+        removeGlobalMonitor()
         petVC?.startAnimation(for: petVC?.currentState ?? .idle)
         NSCursor.arrow.set()
     }
 
     func cancelResize() {
+        guard isResizeMode else { return }
         isResizeMode = false
+        window?.isMovable = true
         hideHandles()
         detachControlBar()
-        // 还原到进入 resize 前的 frame
+        removeGlobalMonitor()
         window?.setFrame(frameBeforeResize, display: true, animate: false)
         petVC?.startAnimation(for: petVC?.currentState ?? .idle)
         NSCursor.arrow.set()
@@ -246,15 +267,15 @@ class PetContainerView: NSView {
 
     func resetResize() {
         guard let win = self.window else { return }
-        let h = defaultH
-        let w = h * aspectRatio
-        var f = win.frame
-        let cx = f.midX
-        f.size = NSSize(width: w, height: h)
-        f.origin.x = cx - w / 2
+        let h = defaultH, w = h * aspectRatio
+        let cx = win.frame.midX, cy = win.frame.midY
+        let f = CGRect(x: cx - w/2, y: cy - h/2, width: w, height: h)
         win.setFrame(f, display: true, animate: false)
-        showHandles()
-        controlBar?.position(below: win)
+        refreshHandlesAndBar()
+    }
+
+    private func removeGlobalMonitor() {
+        if let m = globalMouseMonitor { NSEvent.removeMonitor(m); globalMouseMonitor = nil }
     }
 
     private func detachControlBar() {
@@ -265,13 +286,35 @@ class PetContainerView: NSView {
         }
     }
 
-    // MARK: - Handle 覆盖层（NSView，坐标系和事件完全一致）
+    private func positionControlBar(_ bar: ResizeControlBar, relativeTo win: NSWindow) {
+        guard let screen = NSScreen.main?.visibleFrame else {
+            bar.position(below: win); return
+        }
+        var origin = NSPoint(x: win.frame.midX - bar.frame.width/2,
+                            y: win.frame.minY - bar.frame.height - 6)
+        // 如果下方没有空间就放上面
+        if origin.y < screen.minY {
+            origin.y = win.frame.maxY + 6
+        }
+        origin.x = max(screen.minX, min(screen.maxX - bar.frame.width, origin.x))
+        bar.setFrameOrigin(origin)
+    }
+
+    private func refreshHandlesAndBar() {
+        guard let win = self.window else { return }
+        handleOverlay?.frame = bounds
+        handleOverlay?.needsDisplay = true
+        if let bar = controlBar { positionControlBar(bar, relativeTo: win) }
+    }
+
+    // MARK: - Handle 绘制
 
     private func showHandles() {
         hideHandles()
         let ov = HandleOverlayView(frame: bounds)
         ov.wantsLayer = true
         ov.layer?.backgroundColor = NSColor.clear.cgColor
+        // 不需要在 handleOverlay 处理事件，全部由 PetContainerView 负责
         addSubview(ov)
         handleOverlay = ov
     }
@@ -281,151 +324,115 @@ class PetContainerView: NSView {
         handleOverlay = nil
     }
 
-    private func hitHandle(_ loc: NSPoint) -> Int {
-        return handleOverlay?.hitHandle(loc) ?? -1
-    }
+    // MARK: - 右键菜单 & 键盘
 
-    // MARK: - 右键菜单
+    override var acceptsFirstResponder: Bool { true }
 
     override func keyDown(with event: NSEvent) {
-        // Esc (keyCode 53)
-        if event.keyCode == 53 && isResizeMode {
-            confirmResize()
-            return
+        if event.keyCode == 53 { // Esc
+            isResizeMode ? cancelResize() : super.keyDown(with: event)
+        } else {
+            super.keyDown(with: event)
         }
-        super.keyDown(with: event)
     }
 
     override func rightMouseDown(with event: NSEvent) {
         let menu = NSMenu()
-
         let label = isResizeMode ? "完成调整大小" : "调整大小"
         let resizeItem = NSMenuItem(title: label, action: #selector(toggleResize), keyEquivalent: "")
         resizeItem.target = self
         menu.addItem(resizeItem)
-
         menu.addItem(.separator())
-
         let quitItem = NSMenuItem(title: "退出 Sanshui", action: #selector(quit), keyEquivalent: "")
         quitItem.target = self
         menu.addItem(quitItem)
-
         NSMenu.popUpContextMenu(menu, with: event, for: self)
     }
 
-    @objc private func toggleResize() {
-        isResizeMode ? confirmResize() : enterResizeMode()
-    }
-
+    @objc private func toggleResize() { isResizeMode ? confirmResize() : enterResizeMode() }
     @objc private func quit() { NSApplication.shared.terminate(nil) }
 
-    // MARK: - 鼠标事件
+    // MARK: - 鼠标事件（全部在 PetContainerView 处理，HandleOverlay 不拦截）
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        trackingAreas.forEach { removeTrackingArea($0) }
+        addTrackingArea(NSTrackingArea(rect: bounds,
+            options: [.activeAlways, .mouseMoved, .mouseEnteredAndExited, .inVisibleRect],
+            owner: self, userInfo: nil))
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        guard isResizeMode else { NSCursor.arrow.set(); return }
+        if handleDirAt(event.locationInWindow) != nil {
+            NSCursor.crosshair.set()
+        } else {
+            NSCursor.arrow.set()
+        }
+    }
+
+    override func mouseExited(with event: NSEvent) { NSCursor.arrow.set() }
 
     override func mouseDown(with event: NSEvent) {
         let loc = event.locationInWindow
         if isResizeMode {
-            let h = hitHandle(loc)
-            if h >= 0 {
-                resizingHandle = h
+            if let dir = handleDirAt(loc) {
+                // 开始 resize 拖拽
+                isResizeDragging = true
                 resizeStartMouse = NSEvent.mouseLocation
-                resizeStartFrame = window?.frame ?? .zero
+                resizeStartH = window?.frame.height ?? defaultH
+                resizeStartOrigin = window?.frame.origin ?? .zero
+                resizeHandleDir = dir
+                NSCursor.crosshair.set()
             }
+            // 不触发普通拖拽
             return
         }
         mouseDownPos = NSEvent.mouseLocation
         lastDragDirection = 0
     }
 
-    override func mouseMoved(with event: NSEvent) {
-        guard isResizeMode else { return }
-        let h = hitHandle(event.locationInWindow)
-        if h >= 0 {
-            // 四向箭头光标（用系统私有方式获取）
-            if let img = NSImage(systemSymbolName: "arrow.up.left.and.arrow.down.right", accessibilityDescription: nil) {
-                NSCursor(image: img, hotSpot: NSPoint(x: 8, y: 8)).set()
-            } else {
-                NSCursor.crosshair.set()
-            }
-        } else {
-            NSCursor.arrow.set()
-        }
-    }
-
     override func mouseDragged(with event: NSEvent) {
-        if isResizeMode && resizingHandle >= 0 {
-            guard let window = self.window else { return }
+        if isResizeMode && isResizeDragging {
+            guard let win = self.window else { return }
             let cur = NSEvent.mouseLocation
+            // 把鼠标位移投影到 handle 方向（dir.x, dir.y = ±1 or 0）
+            // 向外拖（同方向）= 正 = 放大；向内拖 = 负 = 缩小
             let dx = cur.x - resizeStartMouse.x
             let dy = cur.y - resizeStartMouse.y
-
-            // 根据 handle 位置计算缩放方向
-            let (nx, ny) = handlePositions[resizingHandle]
-            var delta: CGFloat = 0
-            if abs(dx) > abs(dy) {
-                // 主要拖拽方向是水平：左侧向左拖增大，右侧向右拖增大
-                delta = nx < 0.5 ? -dx : dx
+            let d = resizeHandleDir
+            // 投影量：考虑 x 和 y 分量各自的方向贡献
+            let proj: CGFloat
+            if d.x != 0 && d.y != 0 {
+                proj = (dx * d.x + dy * d.y) / sqrt(2)  // 对角 handle
+            } else if d.x != 0 {
+                proj = dx * d.x
             } else {
-                // 主要拖拽方向是竖直：下侧向下拖增大，上侧向上拖增大
-                delta = ny < 0.5 ? -dy : dy
+                proj = dy * d.y
             }
 
-            let newH = max(minH, min(maxH, resizeStartFrame.height + delta))
+            let newH = max(minH, min(maxH, resizeStartH + proj))
             let newW = newH * aspectRatio
 
-            // 中心点锚定（不随拖拽移动）
-            let centerX = resizeStartFrame.midX
-            let centerY = resizeStartFrame.midY
-            var newFrame = CGRect(
-                x: centerX - newW/2,
-                y: centerY - newH/2,
-                width: newW,
-                height: newH
-            )
+            // 锚点：窗口中心不变
+            let cx = resizeStartOrigin.x + resizeStartH * aspectRatio / 2
+            let cy = resizeStartOrigin.y + resizeStartH / 2
+            var newOrigin = CGPoint(x: cx - newW/2, y: cy - newH/2)
 
-            // 约束：任意一边至少留 screenMargin 在屏幕内
+            // 屏幕边界约束
             if let screen = NSScreen.main?.visibleFrame {
-                // 左右约束
-                if newFrame.minX < screen.minX {
-                    newFrame.origin.x = screen.minX
-                }
-                if newFrame.maxX > screen.maxX {
-                    newFrame.origin.x = screen.maxX - newW
-                }
-                // 上下约束
-                if newFrame.minY < screen.minY {
-                    newFrame.origin.y = screen.minY
-                }
-                if newFrame.maxY > screen.maxY {
-                    newFrame.origin.y = screen.maxY - newH
-                }
+                newOrigin.x = max(screen.minX, min(screen.maxX - newW, newOrigin.x))
+                newOrigin.y = max(screen.minY, min(screen.maxY - newH, newOrigin.y))
             }
 
-            window.setFrame(newFrame, display: true, animate: false)
-            handleOverlay?.frame = bounds
-            handleOverlay?.needsDisplay = true
-
-            // 控制栏位置，带边界检查
-            if let bar = controlBar {
-                bar.position(below: window)
-                // 确保控制栏也不掉出屏幕
-                if let screen = NSScreen.main?.visibleFrame {
-                    var barFrame = bar.frame
-                    if barFrame.minX < screen.minX {
-                        barFrame.origin.x = screen.minX
-                    }
-                    if barFrame.maxX > screen.maxX {
-                        barFrame.origin.x = screen.maxX - barFrame.width
-                    }
-                    if barFrame.minY < screen.minY {
-                        barFrame.origin.y = screen.minY + 50  // 往上挪点
-                    }
-                    bar.setFrame(barFrame, display: false)
-                }
-            }
+            win.setFrame(CGRect(origin: newOrigin, size: CGSize(width: newW, height: newH)),
+                        display: true, animate: false)
+            refreshHandlesAndBar()
             return
         }
 
-        guard let petVC, !isResizeMode else { return }
+        guard !isResizeMode else { return }
+        guard let petVC else { return }
         let cur = NSEvent.mouseLocation
         let dx = cur.x - mouseDownPos.x
 
@@ -448,18 +455,14 @@ class PetContainerView: NSView {
 
     override func mouseUp(with event: NSEvent) {
         if isResizeMode {
-            resizingHandle = -1
+            isResizeDragging = false
             return
         }
         guard let petVC else { return }
-        if petVC.isDragging {
-            petVC.handleDragEnded()
-        } else {
-            petVC.handleClick()
-        }
+        petVC.isDragging ? petVC.handleDragEnded() : petVC.handleClick()
     }
 
-    // 普通拖拽时也加边界约束
+    // 普通拖拽边界约束
     func clampWindowToScreen() {
         guard let window = self.window, let screen = NSScreen.main?.visibleFrame else { return }
         var f = window.frame

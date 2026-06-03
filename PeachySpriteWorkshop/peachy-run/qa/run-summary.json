@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "run_dir": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy",
+  "spritesheet": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/final/spritesheet.webp",
+  "validation": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/final/validation.json",
+  "contact_sheet": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/qa/contact-sheet.png",
+  "review": "/Users/miaojunxu/Documents/Codex/2026-06-01/use-hatch-pet-to-create-a/run-peachy/qa/review.json",
+  "package": "/Users/miaojunxu/.codex/pets/peachy",
+  "extraction_method": "stable-slots"
+}
