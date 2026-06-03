@@ -20,6 +20,7 @@ enum PetState: String, CaseIterable {
     case thinking    // Qoder 思考中 = waiting 行复用 (row 6)
     case coding      // 正在生成代码 (row 7)
     case review      // 完成检查 (row 8)
+    case sunburn     // 太阳特效 (row 9, 触发式单次播放)
 
     var displayName: String {
         switch self {
@@ -32,6 +33,7 @@ enum PetState: String, CaseIterable {
         case .thinking: return "🤔 思考中"
         case .coding:   return "⌨️ 编码中"
         case .review:   return "🎉 完成"
+        case .sunburn:  return "☀️ 日晒"
         }
     }
 
@@ -46,6 +48,7 @@ enum PetState: String, CaseIterable {
         case .thinking: return AnimationConfig(row: 6, frameCount: 6, fps: 6)
         case .coding:   return AnimationConfig(row: 7, frameCount: 6, fps: 9)
         case .review:   return AnimationConfig(row: 8, frameCount: 6, fps: 7)
+        case .sunburn:  return AnimationConfig(row: 9, frameCount: 8, fps: 8)
         }
     }
 }

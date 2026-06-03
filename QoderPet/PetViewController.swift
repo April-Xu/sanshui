@@ -171,6 +171,19 @@ class PetViewController: NSViewController {
         isDragging = false
         startAnimation(for: currentState)
     }
+
+    /// 单次播放，播完后回到 previousState 并回调
+    func playOnce(state: PetState, then completion: @escaping () -> Void) {
+        let config = state.animationConfig
+        let duration = Double(config.frameCount) / config.fps
+        isManualState = true
+        startAnimation(for: state)
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
+            self?.isManualState = false
+            self?.startAnimation(for: self?.currentState ?? .idle)
+            completion()
+        }
+    }
 }
 
 // MARK: - 鼠标事件容器

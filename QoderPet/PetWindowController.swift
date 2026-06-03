@@ -2,6 +2,7 @@ import AppKit
 
 class PetWindowController: NSWindowController {
     var petViewController: PetViewController?
+    var controlBar: PetControlBar?
 
     convenience init() {
         // 放到屏幕右下角，Dock 上方
@@ -32,5 +33,14 @@ class PetWindowController: NSWindowController {
         let vc = PetViewController()
         petViewController = vc
         window.contentViewController = vc
+
+        // 持久控制栏（太阳按钮等）
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let vc = self.petViewController else { return }
+            let bar = PetControlBar.make(petVC: vc)
+            bar.positionBelow(window)
+            window.addChildWindow(bar, ordered: .above)
+            self.controlBar = bar
+        }
     }
 }
