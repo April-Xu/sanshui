@@ -1,0 +1,256 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C270356A1F2343CBBB11A091 /* QoderPetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5F015519E7483BAFB08545 /* QoderPetApp.swift */; };
+		532AA478D40C438DAEAF687B /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */; };
+		230D6A764DBA40C6B774CF6C /* PetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */; };
+		286BE0FB1A164ABDA171CD67 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A84A95C978347A9AD9AFBCB /* PetState.swift */; };
+		D473B26033274AB484241E1B /* SpriteSheetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */; };
+		2726B4F966E04D60A7F9EA50 /* QoderStateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */; };
+		3F3CB3DE289D44018025650F /* spritesheet.webp in Resources */ = {isa = PBXBuildFile; fileRef = E844D145EB084A41A4104644 /* spritesheet.webp */; };
+		F65C5665AE6747C88610BB48 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE500D7CC6A4C9BBE41A4FA /* Info.plist */; };
+		66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040651A66534D7698A88409 /* ResizeControlBar.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4B5F015519E7483BAFB08545 /* QoderPetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QoderPetApp.swift; sourceTree = "<group>"; };
+		F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowController.swift; sourceTree = "<group>"; };
+		6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewController.swift; sourceTree = "<group>"; };
+		0A84A95C978347A9AD9AFBCB /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
+		D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteSheetParser.swift; sourceTree = "<group>"; };
+		BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QoderStateMonitor.swift; sourceTree = "<group>"; };
+		E844D145EB084A41A4104644 /* spritesheet.webp */ = {isa = PBXFileReference; lastKnownFileType = image.webp; path = spritesheet.webp; sourceTree = "<group>"; };
+		1AE500D7CC6A4C9BBE41A4FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6C970015EA35479F91723101 /* QoderPet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QoderPet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8040651A66534D7698A88409 /* ResizeControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeControlBar.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		61C223E6F3024073B10321C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6FA224D3FDDA4D68815ECB0F = {
+			isa = PBXGroup;
+			children = (
+				8821DA9FA417494A8BFBD6B1 /* QoderPet */,
+				148A23B97EED40E5ABEC91A6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8821DA9FA417494A8BFBD6B1 /* QoderPet */ = {
+			isa = PBXGroup;
+			children = (
+								4B5F015519E7483BAFB08545 /* QoderPetApp.swift */,
+				8040651A66534D7698A88409 /* ResizeControlBar.swift */,
+				F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */,
+				6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */,
+				0A84A95C978347A9AD9AFBCB /* PetState.swift */,
+				D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */,
+				BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */,
+								E844D145EB084A41A4104644 /* spritesheet.webp */,
+				1AE500D7CC6A4C9BBE41A4FA /* Info.plist */,
+			);
+			path = QoderPet;
+			sourceTree = "<group>";
+		};
+		148A23B97EED40E5ABEC91A6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6C970015EA35479F91723101 /* QoderPet.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED59DD3C7BEE4232B9CC96F8 /* QoderPet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "QoderPet" */;
+			buildPhases = (
+				C884B3149D9D4328A8E4D804 /* Sources */,
+				61C223E6F3024073B10321C6 /* Frameworks */,
+				6613C2FD279C4F42A40915A0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QoderPet;
+			packageProductDependencies = (
+			);
+			productName = QoderPet;
+			productReference = 6C970015EA35479F91723101 /* QoderPet.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ACF7B5E2EF064BB1B640738C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					ED59DD3C7BEE4232B9CC96F8 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "QoderPet" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6FA224D3FDDA4D68815ECB0F;
+			minimumXcodeVersion = 14.0;
+			productRefGroup = 148A23B97EED40E5ABEC91A6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED59DD3C7BEE4232B9CC96F8 /* QoderPet */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6613C2FD279C4F42A40915A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+								3F3CB3DE289D44018025650F /* spritesheet.webp in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C884B3149D9D4328A8E4D804 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+								C270356A1F2343CBBB11A091 /* QoderPetApp.swift in Sources */,
+				66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */,
+				532AA478D40C438DAEAF687B /* PetWindowController.swift in Sources */,
+				230D6A764DBA40C6B774CF6C /* PetViewController.swift in Sources */,
+				286BE0FB1A164ABDA171CD67 /* PetState.swift in Sources */,
+				D473B26033274AB484241E1B /* SpriteSheetParser.swift in Sources */,
+				2726B4F966E04D60A7F9EA50 /* QoderStateMonitor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CE720D2DDC2041D4B25EE893 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		441A9C0636D74BD285A5913E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				MACOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		946BDE767BAF484FAA513312 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSTDEPLOYMENT_TARGET = 13.0;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = QoderPet/Info.plist;
+				LE_BUNDLE_IDENTIFIER = com.sanshui.app;
+				MACOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sanshui.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E9E0BAE27E26441A9BC82FF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSTDEPLOYMENT_TARGET = 13.0;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = QoderPet/Info.plist;
+				MACOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sanshui.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "QoderPet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE720D2DDC2041D4B25EE893 /* Debug */,
+				441A9C0636D74BD285A5913E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "QoderPet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				946BDE767BAF484FAA513312 /* Debug */,
+				E9E0BAE27E26441A9BC82FF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = ACF7B5E2EF064BB1B640738C /* Project object */;
+}
