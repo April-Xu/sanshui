@@ -215,20 +215,7 @@ class PetContainerView: NSView {
     private var frameBeforeResize: NSRect = .zero
     private var globalMouseMonitor: Any?
 
-    // MARK: - Handle hit（直接在 PetContainerView 坐标里算，不依赖子视图）
-    // 返回方向向量：拖向该方向应该放大
-    private func handleDirAt(_ loc: NSPoint) -> CGPoint? {
-        let w = bounds.width, h = bounds.height, z = handleZone
-        let inLeft   = loc.x < z
-        let inRight  = loc.x > w - z
-        let inBottom = loc.y < z
-        let inTop    = loc.y > h - z
-        guard inLeft || inRight || inBottom || inTop else { return nil }
-        // dir = 鼠标向哪个方向拖会让窗口变大
-        let dx: CGFloat = inLeft ? -1 : (inRight ? 1 : 0)
-        let dy: CGFloat = inBottom ? -1 : (inTop ? 1 : 0)
-        return CGPoint(x: dx, y: dy)
-    }
+    // resize mode 下整个视图都是拖拽区，不需要精确 hit 判断
 
     // MARK: - Resize 模式开关
 
@@ -342,8 +329,8 @@ class PetContainerView: NSView {
     override var acceptsFirstResponder: Bool { true }
 
     override func keyDown(with event: NSEvent) {
-        if event.keyCode == 53 { // Esc
-            isResizeMode ? cancelResize() : super.keyDown(with: event)
+        if event.keyCode == 53 && isResizeMode { // Esc
+            cancelResize()
         } else {
             super.keyDown(with: event)
         }
@@ -376,29 +363,19 @@ class PetContainerView: NSView {
     }
 
     override func mouseMoved(with event: NSEvent) {
-        guard isResizeMode else { NSCursor.arrow.set(); return }
-        if handleDirAt(event.locationInWindow) != nil {
-            NSCursor.crosshair.set()
-        } else {
-            NSCursor.arrow.set()
-        }
+        NSCursor.crosshair.set()
     }
 
     override func mouseExited(with event: NSEvent) { NSCursor.arrow.set() }
 
     override func mouseDown(with event: NSEvent) {
-        let loc = event.locationInWindow
         if isResizeMode {
-            if let dir = handleDirAt(loc) {
-                // 开始 resize 拖拽
-                isResizeDragging = true
-                resizeStartMouse = NSEvent.mouseLocation
-                resizeStartH = window?.frame.height ?? defaultH
-                resizeStartOrigin = window?.frame.origin ?? .zero
-                resizeHandleDir = dir
-                NSCursor.crosshair.set()
-            }
-            // 不触发普通拖拽
+            // resize mode：整个视图都是 resize 区，直接开始
+            isResizeDragging = true
+            resizeStartMouse = NSEvent.mouseLocation
+            resizeStartH      = window?.frame.height ?? defaultH
+            resizeStartOrigin = window?.frame.origin ?? .zero
+            NSCursor.crosshair.set()
             return
         }
         mouseDownPos = NSEvent.mouseLocation
@@ -409,24 +386,21 @@ class PetContainerView: NSView {
         if isResizeMode && isResizeDragging {
             guard let win = self.window else { return }
             let cur = NSEvent.mouseLocation
-
-            // 用 Y 轴位移（向上拖 = 放大，向下拖 = 缩小）
-            // 同时考虑 X 轴（向右拖也放大），取两者最大绝对值方向
             let dx = cur.x - resizeStartMouse.x
             let dy = cur.y - resizeStartMouse.y
-            let delta: CGFloat
-            if abs(dx) >= abs(dy) {
-                delta = dx   // 水平拖：向右放大
-            } else {
-                delta = dy   // 垂直拖：向上放大
-            }
+            // 对角线位移：右/上 = 放大，左/下 = 缩小
+            let delta = (dx - dy) / sqrt(2)
 
             let newH = max(minH, min(maxH, resizeStartH + delta))
             let newW = newH * aspectRatio
 
-            // 底部左角锚定，位置完全不动，只改宽高
-            let origin = resizeStartOrigin
-            win.setFrame(CGRect(x: origin.x, y: origin.y, width: newW, height: newH),
+            // 中心锚定：resize 不改变宠物视觉中心位置
+            let cx = resizeStartOrigin.x + (resizeStartH * aspectRatio) / 2
+            let cy = resizeStartOrigin.y + resizeStartH / 2
+            let newOriginX = cx - newW / 2
+            let newOriginY = cy - newH / 2
+
+            win.setFrame(CGRect(x: newOriginX, y: newOriginY, width: newW, height: newH),
                         display: true, animate: false)
             refreshHandlesAndBar()
             return
