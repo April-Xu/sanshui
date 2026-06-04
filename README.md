@@ -35,7 +35,8 @@ QoderPet/
 | coding | 4 | 5 |
 | success/celebrate | 7 | 6 |
 | error/tired | 6 | 8 |
-| sunburn (预留) | 9 | 8 |
+| sunburn-shy | 9 | 12 |
+| sunburn-swim | 10 | 12 |
 
 ## 状态监听方式
 
@@ -57,7 +58,7 @@ QoderPet/
 
 ## 调整 Spritesheet 解析
 
-当前项目使用 `8×10` atlas，最后一行预留给 `sunburn`。如果你后面改了列数/行数，再修改 `PetViewController.swift` 里：
+当前项目使用 `12×11` atlas。原有动作仍使用每行前 8 格，扩展动作可以使用最多 12 帧。如果你后面改了列数/行数，再修改 `PetViewController.swift` 里：
 ```swift
-spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 8, rows: 10)
+spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 12, rows: 11)
 ```

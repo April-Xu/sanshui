@@ -1,7 +1,7 @@
 import AppKit
 
 class PetViewController: NSViewController {
-    private var imageView: NSImageView!
+    private var imageView: SpriteImageView!
     private var spriteParser: SpriteSheetParser?
     var animationTimer: Timer?
     private var currentFrames: [NSImage] = []
@@ -14,15 +14,12 @@ class PetViewController: NSViewController {
     private var dragOffset = CGPoint.zero
 
     override func loadView() {
-        let v = PetContainerView(frame: NSRect(x: 0, y: 0, width: 52, height: 56))
+        // frame 先用 0，窗口创建后 contentView 会被 window 自动 resize
+        let v = PetContainerView(frame: NSRect(x: 0, y: 0, width: 137, height: 149))
         v.wantsLayer = true
         v.layer?.backgroundColor = NSColor.clear.cgColor
+        v.autoresizingMask = [.width, .height]
         v.petVC = self
-        // 开启 mouseMoved 追踪（resize mode 用）
-        v.addTrackingArea(NSTrackingArea(
-            rect: v.bounds,
-            options: [.activeAlways, .mouseMoved, .inVisibleRect],
-            owner: v, userInfo: nil))
         view = v
     }
 
@@ -42,23 +39,18 @@ class PetViewController: NSViewController {
     // MARK: - ImageView
 
     private func setupImageView() {
-        imageView = NSImageView(frame: view.bounds)
+        imageView = SpriteImageView(frame: view.bounds)
         imageView.imageScaling = .scaleProportionallyUpOrDown
         imageView.animates = false
         imageView.imageAlignment = .alignBottom
+        imageView.autoresizingMask = [.width, .height]
         view.addSubview(imageView)
 
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
     }
 
     private func setupSpriteSheet() {
-        spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 8, rows: 10)
+        // 精灵图: 2304×2288 = 12列×11行，192×208/格
+        spriteParser = SpriteSheetParser(imageName: "spritesheet", columns: 12, rows: 11)
     }
 
     // MARK: - 动画
@@ -91,6 +83,7 @@ class PetViewController: NSViewController {
         guard !currentFrames.isEmpty else { return }
         currentFrameIndex = (currentFrameIndex + 1) % currentFrames.count
         imageView.image = currentFrames[currentFrameIndex]
+        imageView.needsDisplay = true
     }
 
     // MARK: - 状态管理
@@ -126,13 +119,9 @@ class PetViewController: NSViewController {
 
     func handleClick() {
         guard !isDragging else { return }
-        let prev = currentState
-        isManualState = true
-        startAnimation(for: .waving)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.isManualState = false
-            self?.startAnimation(for: prev)
-        }
+        let options: [PetState] = [.waving, .sunburn, .sunburnSwim]
+        let pick = options.randomElement() ?? .waving
+        playOnce(state: pick) { }
     }
 
     // MARK: - 拖拽 → 根据方向播 running-left / running-right
@@ -184,6 +173,39 @@ class PetViewController: NSViewController {
             completion()
         }
     }
+
+    func playSequence(states: [PetState], then completion: @escaping () -> Void) {
+        guard let first = states.first else {
+            completion()
+            return
+        }
+
+        isManualState = true
+        startAnimation(for: first)
+        let config = first.animationConfig
+        let duration = Double(config.frameCount) / config.fps
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
+            guard let self else { return }
+            let remaining = Array(states.dropFirst())
+            if remaining.isEmpty {
+                self.isManualState = false
+                self.startAnimation(for: self.currentState)
+                completion()
+            } else {
+                self.playSequence(states: remaining, then: completion)
+            }
+        }
+    }
+}
+
+final class SpriteImageView: NSImageView {
+    override var isOpaque: Bool { false }
+
+    override func draw(_ dirtyRect: NSRect) {
+        NSColor.clear.setFill()
+        bounds.fill(using: .copy)
+        super.draw(dirtyRect)
+    }
 }
 
 // MARK: - 鼠标事件容器
@@ -195,6 +217,7 @@ class PetContainerView: NSView {
     private var lastDragDirection: Int = 0
     private let dragThreshold: CGFloat = 5
     private let screenMargin: CGFloat = 16
+    private var didReceiveMouseDown = false   // 防止假 mouseDragged 触发 running 动画
 
     // MARK: - 右键菜单
 
@@ -215,8 +238,8 @@ class PetContainerView: NSView {
     }
 
     @objc private func showResizeSlider() {
-        guard let win = self.window else { return }
-        SizePanel.show(for: win)
+        guard let win = self.window, let vc = petVC else { return }
+        ResizeHUD.show(petWindow: win, petVC: vc)
     }
 
     @objc private func quit() { NSApplication.shared.terminate(nil) }
@@ -224,12 +247,13 @@ class PetContainerView: NSView {
     // MARK: - 鼠标事件
 
     override func mouseDown(with event: NSEvent) {
+        didReceiveMouseDown = true
         mouseDownPos = NSEvent.mouseLocation
         lastDragDirection = 0
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let petVC else { return }
+        guard didReceiveMouseDown, let petVC else { return }
         let cur = NSEvent.mouseLocation
         let dx = cur.x - mouseDownPos.x
         if !petVC.isDragging {
@@ -250,6 +274,7 @@ class PetContainerView: NSView {
     }
 
     override func mouseUp(with event: NSEvent) {
+        didReceiveMouseDown = false
         guard let petVC else { return }
         petVC.isDragging ? petVC.handleDragEnded() : petVC.handleClick()
     }
@@ -337,8 +362,16 @@ class SizePanel: NSPanel {
         guard let win = petWindow else { return }
         let h = CGFloat(sender.doubleValue)
         let w = h * ratio
-        win.setFrame(CGRect(x: startCX - w/2, y: startCY - h/2, width: w, height: h),
-                    display: true, animate: false)
+        let newRect = CGRect(x: startCX - w/2, y: startCY - h/2, width: w, height: h)
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        win.setFrame(newRect, display: false, animate: false)
+        // 强制 contentView 立刻同步到新尺寸并 layout
+        win.contentView?.setFrameSize(NSSize(width: w, height: h))
+        win.contentView?.needsLayout = true
+        win.contentView?.layoutSubtreeIfNeeded()
+        win.displayIfNeeded()
+        CATransaction.commit()
         (contentView?.viewWithTag(1) as? NSTextField)?.stringValue = "\(Int(h)) px"
     }
 

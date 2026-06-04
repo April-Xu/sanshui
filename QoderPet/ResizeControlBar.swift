@@ -2,141 +2,237 @@ import AppKit
 
 // MARK: - 像素风按钮
 
-class PixelButton: NSButton {
-    var bgColor: NSColor = .black
-    var borderColor: NSColor = NSColor.white.withAlphaComponent(0.8)
-    var labelColor: NSColor = .white
+class PixelBtn: NSView {
+    var title: String
+    var bgColor: NSColor
+    var onClick: (() -> Void)?
+    private var hovered = false
+    private var pressed = false
+
+    init(title: String, bg: NSColor) {
+        self.title = title
+        self.bgColor = bg
+        super.init(frame: .zero)
+        wantsLayer = true
+        addTrackingArea(NSTrackingArea(rect: bounds,
+            options: [.activeAlways, .mouseEnteredAndExited, .inVisibleRect],
+            owner: self, userInfo: nil))
+    }
+    required init?(coder: NSCoder) { fatalError() }
 
     override func draw(_ dirtyRect: NSRect) {
+        let b = bounds
         // 背景
-        bgColor.setFill()
-        bounds.fill()
-        // 外边框
-        borderColor.setStroke()
-        let outer = NSBezierPath(rect: bounds.insetBy(dx: 0.5, dy: 0.5))
-        outer.lineWidth = 1; outer.stroke()
-        // 左上高光
-        NSColor.white.withAlphaComponent(0.3).setStroke()
+        let fill = pressed ? bgColor.blended(withFraction: 0.35, of: .black)! :
+                   hovered ? bgColor.blended(withFraction: 0.15, of: .white)! : bgColor
+        fill.setFill(); b.fill()
+        // 像素边框：外深内亮
+        NSColor(white: 0.1, alpha: 1).setStroke()
+        NSBezierPath(rect: b.insetBy(dx: 0.5, dy: 0.5)).lineWidth = 1.5
+        NSBezierPath(rect: b.insetBy(dx: 0.5, dy: 0.5)).stroke()
+        NSColor.white.withAlphaComponent(pressed ? 0 : 0.45).setStroke()
         let hl = NSBezierPath()
-        hl.move(to: NSPoint(x: 1, y: bounds.height - 1))
-        hl.line(to: NSPoint(x: 1, y: 1))
-        hl.line(to: NSPoint(x: bounds.width - 1, y: 1))
+        hl.move(to: NSPoint(x: 2, y: b.height-2))
+        hl.line(to: NSPoint(x: 2, y: 2))
+        hl.line(to: NSPoint(x: b.width-2, y: 2))
         hl.lineWidth = 1; hl.stroke()
         // 文字
         let para = NSMutableParagraphStyle(); para.alignment = .center
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedSystemFont(ofSize: 9, weight: .bold),
-            .foregroundColor: labelColor,
+        let attr: [NSAttributedString.Key: Any] = [
+            .font: NSFont.monospacedSystemFont(ofSize: 10, weight: .bold),
+            .foregroundColor: NSColor.white,
             .paragraphStyle: para
         ]
-        let r = NSRect(x: 0, y: (bounds.height - 11) / 2, width: bounds.width, height: 11)
-        (title as NSString).draw(in: r, withAttributes: attrs)
+        let r = NSRect(x: 0, y: (b.height-13)/2, width: b.width, height: 13)
+        (title as NSString).draw(in: r, withAttributes: attr)
+    }
+
+    override func mouseEntered(with event: NSEvent) { hovered = true;  needsDisplay = true }
+    override func mouseExited(with event: NSEvent)  { hovered = false; pressed = false; needsDisplay = true }
+    override func mouseDown(with event: NSEvent)    { pressed = true;  needsDisplay = true }
+    override func mouseUp(with event: NSEvent) {
+        guard pressed else { return }
+        pressed = false; needsDisplay = true; onClick?()
     }
 }
 
-// MARK: - Handle 覆盖 NSView（用 draw 绘制，坐标系和事件完全一致）
+// MARK: - 像素风调整大小 HUD
 
-class HandleOverlayView: NSView {
-    let handleSize: CGFloat = 8
+class ResizeHUD: NSPanel {
+    private static var current: ResizeHUD?
 
-    // 8 handle 归一化位置（NSView 坐标，y=0 在底部）
-    let positions: [(CGFloat, CGFloat)] = [
-        (0,   0  ), (0.5, 0  ), (1,   0  ),   // 底左、底中、底右
-        (0,   0.5),              (1,   0.5),   // 左中、右中
-        (0,   1  ), (0.5, 1  ), (1,   1  ),   // 顶左、顶中、顶右
-    ]
+    private weak var petWindow: NSWindow?
+    private weak var petVC: PetViewController?
+    private let minH: CGFloat = 16
+    private let maxH: CGFloat = 200
+    private let ratio: CGFloat = 192.0 / 208.0
+    private var startH: CGFloat = 0
+    private var startCX: CGFloat = 0
+    private var startCY: CGFloat = 0
+    private var slider: NSSlider!
+    private var sizeLabel: NSTextField!
+    private var globalMonitor: Any?
 
-    func handleRect(at i: Int) -> NSRect {
-        let (nx, ny) = positions[i]
-        let x = nx * (bounds.width  - handleSize)
-        let y = ny * (bounds.height - handleSize)
-        return NSRect(x: x, y: y, width: handleSize, height: handleSize)
+    static func show(petWindow: NSWindow, petVC: PetViewController) {
+        current?.dismiss(confirm: false)
+        let hud = ResizeHUD(petWindow: petWindow, petVC: petVC)
+        current = hud
+        hud.orderFront(nil)
     }
 
-    func hitHandle(_ loc: NSPoint) -> Int {
-        let pad: CGFloat = 5
-        for i in 0..<positions.count {
-            if handleRect(at: i).insetBy(dx: -pad, dy: -pad).contains(loc) { return i }
-        }
-        return -1
-    }
+    private init(petWindow: NSWindow, petVC: PetViewController) {
+        self.petWindow = petWindow
+        self.petVC = petVC
+        self.startH  = petWindow.frame.height
+        self.startCX = petWindow.frame.midX
+        self.startCY = petWindow.frame.midY
 
-    override var isFlipped: Bool { false }
-
-    // 事件穿透：所有鼠标事件由 superview (PetContainerView) 处理
-    override func hitTest(_ point: NSPoint) -> NSView? { return nil }
-
-    override func draw(_ dirtyRect: NSRect) {
-        // 白色虚线边框
-        NSColor.white.withAlphaComponent(0.85).setStroke()
-        let border = NSBezierPath(rect: bounds.insetBy(dx: 1, dy: 1))
-        border.lineWidth = 1
-        let dash: [CGFloat] = [4, 3]
-        border.setLineDash(dash, count: 2, phase: 0)
-        border.stroke()
-
-        // 8个 handle 方块
-        for i in 0..<positions.count {
-            let r = handleRect(at: i)
-            NSColor.white.setFill(); r.fill()
-            NSColor.systemBlue.setStroke()
-            let p = NSBezierPath(rect: r.insetBy(dx: 0.5, dy: 0.5))
-            p.lineWidth = 1; p.stroke()
-        }
-    }
-}
-
-// MARK: - 控制栏
-
-class ResizeControlBar: NSPanel {
-    var onConfirm: (() -> Void)?
-    var onCancel:  (() -> Void)?
-    var onReset:   (() -> Void)?
-
-    static func makeBar() -> ResizeControlBar {
-        let bar = ResizeControlBar(
-            contentRect: NSRect(x: 0, y: 0, width: 106, height: 22),
-            styleMask: [.borderless, .nonactivatingPanel],
-            backing: .buffered, defer: false)
-        bar.isOpaque = false
-        bar.backgroundColor = .clear
-        bar.level = .floating
-        bar.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        bar.hasShadow = false
-        bar.setupButtons()
-        return bar
-    }
-
-    private func setupButtons() {
-        let view = NSView(frame: NSRect(x: 0, y: 0, width: 106, height: 22))
-        view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.clear.cgColor
-        contentView = view
-
-        func btn(_ title: String, bg: NSColor, x: CGFloat) -> PixelButton {
-            let b = PixelButton(frame: NSRect(x: x, y: 0, width: 32, height: 22))
-            b.title = title; b.bgColor = bg; b.isBordered = false
-            return b
-        }
-
-        let confirm = btn("✓", bg: NSColor(red:0.1,green:0.45,blue:0.1,alpha:1), x: 0)
-        confirm.target = self; confirm.action = #selector(didConfirm)
-
-        let reset = btn("↺", bg: NSColor(white:0.28,alpha:1), x: 37)
-        reset.target = self; reset.action = #selector(didReset)
-
-        let cancel = btn("✕", bg: NSColor(red:0.5,green:0.1,blue:0.1,alpha:1), x: 74)
-        cancel.target = self; cancel.action = #selector(didCancel)
-
-        [confirm, reset, cancel].forEach { view.addSubview($0) }
-    }
-
-    func position(below petWindow: NSWindow) {
+        // HUD 尺寸
+        let W: CGFloat = 200, H: CGFloat = 62
         let pf = petWindow.frame
-        setFrameOrigin(NSPoint(x: pf.midX - frame.width/2, y: pf.minY - frame.height - 4))
+        // 优先放宠物下方，不够就放上方
+        var x = pf.midX - W/2
+        var y = pf.minY - H - 8
+        if let screen = NSScreen.main?.visibleFrame {
+            if y < screen.minY { y = pf.maxY + 8 }
+            x = max(screen.minX + 4, min(screen.maxX - W - 4, x))
+        }
+
+        super.init(contentRect: NSRect(x: x, y: y, width: W, height: H),
+                   styleMask: [.borderless, .nonactivatingPanel],
+                   backing: .buffered, defer: false)
+        isOpaque = false
+        backgroundColor = .clear
+        level = .floating
+        collectionBehavior = [.canJoinAllSpaces, .stationary]
+        hasShadow = true
+
+        buildUI()
+        petVC.animationTimer?.invalidate()  // 冻结动画
+
+        // 点击宠物外面 → 取消
+        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] _ in
+            self?.dismiss(confirm: false)
+        }
     }
 
-    @objc private func didConfirm() { onConfirm?() }
-    @objc private func didReset()   { onReset?() }
-    @objc private func didCancel()  { onCancel?() }
+    private func buildUI() {
+        let W = contentRect(forFrameRect: frame).width
+        let H = contentRect(forFrameRect: frame).height
+        let cv = NSView(frame: NSRect(x: 0, y: 0, width: W, height: H))
+        cv.wantsLayer = true
+        contentView = cv
+
+        // 像素风背景
+        let bg = PixelBgView(frame: cv.bounds)
+        cv.addSubview(bg)
+
+        // 尺寸标签
+        sizeLabel = NSTextField(labelWithString: "\(Int(startH)) px")
+        sizeLabel.frame = NSRect(x: W/2-22, y: H-18, width: 44, height: 14)
+        sizeLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .bold)
+        sizeLabel.textColor = NSColor(red:1, green:0.92, blue:0.6, alpha:1)
+        sizeLabel.alignment = .center
+        cv.addSubview(sizeLabel)
+
+        // 滑块
+        slider = NSSlider(frame: NSRect(x: 8, y: H-36, width: W-16, height: 20))
+        slider.minValue = Double(minH)
+        slider.maxValue = Double(maxH)
+        slider.doubleValue = Double(startH)
+        slider.isContinuous = true
+        slider.target = self
+        slider.action = #selector(sliderMoved(_:))
+        cv.addSubview(slider)
+
+        // 三个像素风按钮
+        let btnW: CGFloat = 52, btnH: CGFloat = 20, gap: CGFloat = 6
+        let totalW = btnW*3 + gap*2
+        let bx = (W - totalW) / 2
+        let by: CGFloat = 6
+
+        let reset  = PixelBtn(title: "↺ 重置",  bg: NSColor(white: 0.32, alpha: 1))
+        let confirm = PixelBtn(title: "✓ 确认", bg: NSColor(red:0.15, green:0.48, blue:0.15, alpha:1))
+        let cancel  = PixelBtn(title: "✕ 取消", bg: NSColor(red:0.5, green:0.12, blue:0.12, alpha:1))
+
+        reset.frame   = NSRect(x: bx,              y: by, width: btnW, height: btnH)
+        confirm.frame = NSRect(x: bx+btnW+gap,     y: by, width: btnW, height: btnH)
+        cancel.frame  = NSRect(x: bx+(btnW+gap)*2, y: by, width: btnW, height: btnH)
+
+        reset.onClick   = { [weak self] in self?.resetSize() }
+        confirm.onClick = { [weak self] in self?.dismiss(confirm: true) }
+        cancel.onClick  = { [weak self] in self?.dismiss(confirm: false) }
+
+        [reset, confirm, cancel].forEach { cv.addSubview($0) }
+    }
+
+    @objc private func sliderMoved(_ sender: NSSlider) {
+        let h = CGFloat(sender.doubleValue)
+        applyHeight(h)
+        sizeLabel.stringValue = "\(Int(h)) px"
+    }
+
+    private func applyHeight(_ h: CGFloat) {
+        guard let win = petWindow else { return }
+        let clamped = max(minH, min(maxH, h))
+        let w = clamped * ratio
+        win.setFrame(CGRect(x: startCX - w/2, y: startCY - clamped/2,
+                           width: w, height: clamped),
+                    display: true, animate: false)
+    }
+
+    private func resetSize() {
+        let defaultH: CGFloat = 149
+        slider.doubleValue = Double(defaultH)
+        applyHeight(defaultH)
+        sizeLabel.stringValue = "\(Int(defaultH)) px"
+    }
+
+    func dismiss(confirm: Bool) {
+        if let m = globalMonitor { NSEvent.removeMonitor(m); globalMonitor = nil }
+        if !confirm {
+            // 取消：还原
+            applyHeight(startH)
+        } else {
+            // 确认：把新中心记下来（下次 resize 从这里开始）
+            if let win = petWindow {
+                startCX = win.frame.midX
+                startCY = win.frame.midY
+            }
+        }
+        petVC?.startAnimation(for: petVC?.currentState ?? .idle)
+        orderOut(nil)
+        if ResizeHUD.current === self { ResizeHUD.current = nil }
+    }
+
+    // Esc 关闭（取消）
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 53 { dismiss(confirm: false) }
+        else { super.keyDown(with: event) }
+    }
+
+    deinit {
+        if let m = globalMonitor { NSEvent.removeMonitor(m) }
+    }
+}
+
+// MARK: - 像素风背景
+
+class PixelBgView: NSView {
+    override func draw(_ dirtyRect: NSRect) {
+        let b = bounds
+        // 深色半透明底
+        NSColor(red:0.08, green:0.06, blue:0.02, alpha:0.92).setFill(); b.fill()
+        // 外层深棕边框
+        NSColor(red:0.65, green:0.42, blue:0.08, alpha:1).setStroke()
+        NSBezierPath(rect: b.insetBy(dx:0.5, dy:0.5)).lineWidth = 2
+        NSBezierPath(rect: b.insetBy(dx:0.5, dy:0.5)).stroke()
+        // 内层亮高光（左上）
+        NSColor(red:1, green:0.88, blue:0.4, alpha:0.35).setStroke()
+        let hl = NSBezierPath()
+        hl.move(to: NSPoint(x:3, y:b.height-3))
+        hl.line(to: NSPoint(x:3, y:3))
+        hl.line(to: NSPoint(x:b.width-3, y:3))
+        hl.lineWidth = 1; hl.stroke()
+    }
 }

@@ -1,184 +1,28 @@
 {
-  "target_body_height": 194,
-  "sun_position": {
-    "left": 127,
-    "top": 22,
-    "size": 31
-  },
-  "metrics": [
-    {
-      "frame": 0,
-      "bbox": [
-        38,
-        9,
-        157,
-        203
-      ],
-      "body_size": [
-        93,
-        194
-      ],
-      "sun_size": [
-        30,
-        31
-      ],
-      "body_left_top": [
-        38,
-        9
-      ]
-    },
-    {
-      "frame": 1,
-      "bbox": [
-        36,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        97,
-        194
-      ],
-      "sun_size": [
-        31,
-        31
-      ],
-      "body_left_top": [
-        36,
-        9
-      ]
-    },
-    {
-      "frame": 2,
-      "bbox": [
-        38,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        91,
-        194
-      ],
-      "sun_size": [
-        31,
-        31
-      ],
-      "body_left_top": [
-        38,
-        9
-      ]
-    },
-    {
-      "frame": 3,
-      "bbox": [
-        38,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        92,
-        194
-      ],
-      "sun_size": [
-        31,
-        29
-      ],
-      "body_left_top": [
-        38,
-        9
-      ]
-    },
-    {
-      "frame": 4,
-      "bbox": [
-        40,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        89,
-        194
-      ],
-      "sun_size": [
-        31,
-        31
-      ],
-      "body_left_top": [
-        40,
-        9
-      ]
-    },
-    {
-      "frame": 5,
-      "bbox": [
-        40,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        88,
-        194
-      ],
-      "sun_size": [
-        31,
-        30
-      ],
-      "body_left_top": [
-        40,
-        9
-      ]
-    },
-    {
-      "frame": 6,
-      "bbox": [
-        38,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        91,
-        194
-      ],
-      "sun_size": [
-        31,
-        30
-      ],
-      "body_left_top": [
-        38,
-        9
-      ]
-    },
-    {
-      "frame": 7,
-      "bbox": [
-        38,
-        9,
-        158,
-        203
-      ],
-      "body_size": [
-        91,
-        194
-      ],
-      "sun_size": [
-        31,
-        30
-      ],
-      "body_left_top": [
-        38,
-        9
-      ]
-    }
+  "sunburn_sequence_labels": [
+    "open-jacket",
+    "remove-jacket",
+    "offer-jacket",
+    "offer-jacket-hold",
+    "relieved",
+    "relieved-smile",
+    "relieved-smile-hold",
+    "relieved-smile-end"
+  ],
+  "gif_durations_ms": [
+    320,
+    320,
+    300,
+    300,
+    320,
+    360,
+    420,
+    520
   ],
   "notes": [
-    "sunburn body resized independently from sun",
-    "sun moved to the right side of the head so it no longer drives character scaling",
-    "main atlas row 9 updated in place",
+    "last frame changed to hands-down ending",
+    "atlas row 9 is now cleared before compositing new sunburn row",
+    "this removes stale old suns and old hair ghost pixels",
     "top 9 rows remain unchanged"
   ]
 }

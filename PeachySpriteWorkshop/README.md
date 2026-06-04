@@ -23,7 +23,8 @@
   - `frames/`、`frames-stable/`：切出来的逐帧 PNG
   - `final/`、`final-stable/`：打包后的 atlas
   - `qa/`、`qa-stable/`：contact sheet、GIF 预览、校验产物
-  - `custom-sunburn/`：`sunburn` 的独立 strip、sprite、GIF 和 QA
+  - `custom-sunburn/`：旧版 `sunburn` 工作区，仅保留作历史参考
+  - `custom-sunburn-v2/`：当前 App 使用的两条 12 帧扩展 row、sprite、GIF 和 QA
 
 - `hatch-pet-skill/`
   这次精灵图工作流依赖的规则与脚本，包含：
@@ -33,10 +34,11 @@
 
 ## 现在的重要事实
 
-- 主 `spritesheet.webp` 还是 Codex 官方 9 状态 atlas。
-- `sunburn` 目前已经做成独立 sprite，放在：
-  `/Users/miaojunxu/Documents/Claude/Projects/QoderPet/PeachySpriteWorkshop/peachy-run/custom-sunburn/`
-- 如果后面要把 `sunburn` 真正塞进 App 在用的主 atlas，还需要决定替换哪个现有状态位。
+- App 主 `spritesheet.webp` 当前为 `12×11` atlas，每格仍为 `192×208`。
+- 原有 9 个状态保留在 `row 0-8` 的前 8 格。
+- `row 9` 是 `sunburn-shy`，`row 10` 是 `sunburn-swim`，两行各 12 帧。
+- 当前扩展动作工作区：
+  `/Users/miaojunxu/Documents/Claude/Projects/QoderPet/PeachySpriteWorkshop/peachy-run/custom-sunburn-v2/`
 
 ## GitHub
 
@@ -44,4 +46,3 @@
   `/Users/miaojunxu/Documents/Claude/Projects/QoderPet`
 - 当前已经连到远端：
   `origin = https://github.com/April-Xu/qoder-pet.git`
-

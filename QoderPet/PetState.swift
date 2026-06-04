@@ -1,15 +1,15 @@
 import Foundation
 
-// Codex hatch-pet 主状态保持原 9 状态不变，row 9 追加预留给 sunburn
+// Codex hatch-pet 主状态保持原 9 状态不变，row 9-10 为扩展动作
 // Row 0: idle | 1: running-right | 2: running-left
 // Row 3: waving | 4: jumping | 5: failed
 // Row 6: waiting | 7: running | 8: review
-// Row 9: sunburn (暂未接入状态机)
-// Spritesheet 行对应关系（8列 × 10行，每格 192×208）
+// Row 9: sunburn-shy | Row 10: sunburn-swim
+// Spritesheet 行对应关系（12列 × 11行，每格 192×208）
 // Row 0: idle      Row 1: running-right  Row 2: running-left
 // Row 3: waving    Row 4: jumping        Row 5: failed
 // Row 6: waiting   Row 7: running        Row 8: review
-// Row 9: sunburn
+// Row 9: sunburn-shy  Row 10: sunburn-swim
 enum PetState: String, CaseIterable {
     case idle        // 待机 (row 0)
     case walking     // 漫步，内部用，实际切 row1/2
@@ -20,7 +20,8 @@ enum PetState: String, CaseIterable {
     case thinking    // Qoder 思考中 = waiting 行复用 (row 6)
     case coding      // 正在生成代码 (row 7)
     case review      // 完成检查 (row 8)
-    case sunburn     // 太阳特效 (row 9, 触发式单次播放)
+    case sunburn     // W 坐姿，外套半脱 (row 9)
+    case sunburnSwim // 同姿势，运动泳装 (row 10)
 
     var displayName: String {
         switch self {
@@ -34,6 +35,7 @@ enum PetState: String, CaseIterable {
         case .coding:   return "⌨️ 编码中"
         case .review:   return "🎉 完成"
         case .sunburn:  return "☀️ 日晒"
+        case .sunburnSwim: return "☀️ 日晒换装"
         }
     }
 
@@ -48,7 +50,8 @@ enum PetState: String, CaseIterable {
         case .thinking: return AnimationConfig(row: 6, frameCount: 6, fps: 6)
         case .coding:   return AnimationConfig(row: 7, frameCount: 6, fps: 9)
         case .review:   return AnimationConfig(row: 8, frameCount: 6, fps: 7)
-        case .sunburn:  return AnimationConfig(row: 9, frameCount: 8, fps: 8)
+        case .sunburn:     return AnimationConfig(row: 9,  frameCount: 12, fps: 6)
+        case .sunburnSwim: return AnimationConfig(row: 10, frameCount: 12, fps: 6)
         }
     }
 }

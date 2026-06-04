@@ -35,6 +35,7 @@ class SpriteSheetParser {
     }
 
     private func extractFrame(row: Int, column: Int) -> NSImage? {
+        guard row >= 0, row < rows, column >= 0, column < columns else { return nil }
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
 
         let scaleX = CGFloat(cgImage.width) / image.size.width
@@ -50,7 +51,20 @@ class SpriteSheetParser {
 
         guard let cropped = cgImage.cropping(to: cropRect) else { return nil }
 
-        let frameImg = NSImage(cgImage: cropped, size: frameSize)
+        // Draw each crop into a fresh transparent bitmap. This prevents stale pixels
+        // from a previous transparent frame surviving in the window backing store.
+        let frameImg = NSImage(size: frameSize, flipped: false) { destination in
+            NSColor.clear.setFill()
+            destination.fill(using: .copy)
+            NSGraphicsContext.current?.imageInterpolation = .high
+            NSImage(cgImage: cropped, size: self.frameSize).draw(
+                in: destination,
+                from: .zero,
+                operation: .copy,
+                fraction: 1
+            )
+            return true
+        }
         return frameImg
     }
 }
