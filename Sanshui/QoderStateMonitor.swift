@@ -4,6 +4,9 @@ class QoderStateMonitor {
     static let shared = QoderStateMonitor()
 
     var onStateChange: ((PetState) -> Void)?
+    /// streaming 期间实时 token 更新（当前轮次 delta）
+    var onLiveTokenUpdate: ((Int) -> Void)?
+
     private(set) var currentState: PetState = .idle
 
     private var pollTimer: Timer?
@@ -18,6 +21,10 @@ class QoderStateMonitor {
     private var lastLogActivity: Date = .distantPast
     // 日志静止超过此时间且非 idle → 回 idle（Qoder 关闭或长时间无活动）
     private let logIdleTimeout: TimeInterval = 30
+    // 本轮开始时的 usedTokens 基准（prompting 时记录）
+    private var turnStartTokens: Int = 0
+    // 上次播报的 liveTokens delta（避免重复回调）
+    private var lastLiveTokenDelta: Int = -1
 
     func startMonitoring() {
         // 记录启动时间，只处理启动之后的新日志行
@@ -65,12 +72,23 @@ class QoderStateMonitor {
             let latest = String(newLines.last?.prefix(23) ?? "")  // 毫秒精度，避免同秒内重复处理
             let event = self.parseEvent(from: newLines, fromQuestWindow: questHasNew)
 
+            // 解析实时 token 数
+            let liveTokens = self.parseUsedTokens(from: newLines)
+
             DispatchQueue.main.async {
                 if !latest.isEmpty {
                     self.lastSeenTimestamp = latest
                     self.lastLogActivity = Date()
                 }
                 if let event { self.handle(event) }
+                // 播报 token delta（仅 streaming 中）
+                if let t = liveTokens, self.currentState == .coding {
+                    let delta = max(0, t - self.turnStartTokens)
+                    if delta != self.lastLiveTokenDelta {
+                        self.lastLiveTokenDelta = delta
+                        self.onLiveTokenUpdate?(delta)
+                    }
+                }
             }
         }
     }
@@ -152,11 +170,48 @@ class QoderStateMonitor {
             blockQuestUntil = Date().addingTimeInterval(8)
 
         case .waiting:
+            // prompting：记录当前 usedTokens 基准，重置 delta
+            lastLiveTokenDelta = -1
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self else { return }
+                let base = self.readLatestUsedTokensFromLog() ?? 0
+                DispatchQueue.main.async { self.turnStartTokens = base }
+            }
             transition(to: .waiting, from: "log:waiting")
 
         case .thinking:
             transition(to: .thinking, from: "log:thinking")
         }
+    }
+
+    // MARK: - Token 工具
+
+    /// 从新日志行中提取最新 usedTokens
+    private func parseUsedTokens(from lines: [String]) -> Int? {
+        for line in lines.reversed() {
+            if line.contains("Context usage update"),
+               let r = line.range(of: "\"usedTokens\":"),
+               let end = line[r.upperBound...].firstIndex(where: { !$0.isNumber && $0 != "-" }) {
+                return Int(line[r.upperBound..<end])
+            }
+        }
+        return nil
+    }
+
+    /// 读 agent.log 中最近一条 Context usage update 的 usedTokens（基准用）
+    private func readLatestUsedTokensFromLog() -> Int? {
+        let base = NSHomeDirectory() + "/Library/Application Support/Qoder/logs"
+        guard let dirs = try? FileManager.default.contentsOfDirectory(atPath: base)
+            .filter({ !$0.hasPrefix(".") }).sorted().reversed(),
+              let latest = dirs.first else { return nil }
+        let path = "\(base)/\(latest)/window1/agent.log"
+        guard let content = try? String(contentsOfFile: path, encoding: .utf8) else { return nil }
+        let lines = content.components(separatedBy: "\n").filter { $0.contains("Context usage update") }
+        return lines.compactMap { line -> Int? in
+            guard let r = line.range(of: "\"usedTokens\":"),
+                  let end = line[r.upperBound...].firstIndex(where: { !$0.isNumber && $0 != "-" }) else { return nil }
+            return Int(line[r.upperBound..<end])
+        }.last
     }
 
     // MARK: - 工具

@@ -30,7 +30,22 @@ class PetViewController: NSViewController {
         startAnimation(for: .idle)
 
         QoderStateMonitor.shared.onStateChange = { [weak self] newState in
-            DispatchQueue.main.async { self?.transitionToState(newState) }
+            DispatchQueue.main.async {
+                self?.transitionToState(newState)
+                // Streaming 浮层：coding 时显示，其他时候隐藏
+                if let win = self?.view.window {
+                    if newState == .coding {
+                        StreamingOverlayPanel.show(petWindow: win)
+                    } else {
+                        StreamingOverlayPanel.hide()
+                    }
+                }
+            }
+        }
+        QoderStateMonitor.shared.onLiveTokenUpdate = { delta in
+            DispatchQueue.main.async {
+                StreamingOverlayPanel.current?.updateTokens(delta)
+            }
         }
         QoderStateMonitor.shared.startMonitoring()
         // 随机漫步已移除
