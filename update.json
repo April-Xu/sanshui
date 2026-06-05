@@ -1,5 +1,5 @@
 {
-  "version": "1.5.2",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.2/Sanshui-1.5.2.dmg",
-  "notes": "• 右键「检查更新」自动下载安装，无需浏览器\n• App 全面改名 Sanshui\n• 多显示器拖拽边界修复\n• Streaming overlay 输入框可打字\n• Token 气泡样式优化"
+  "version": "1.5.3",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.3/Sanshui-1.5.3.dmg",
+  "notes": "• 修复更新完成弹窗按钮无法点击的问题"
 }
