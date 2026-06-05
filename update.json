@@ -1,5 +1,5 @@
 {
-  "version": "1.5.9",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.9/Sanshui-1.5.9.dmg",
-  "notes": "• 气泡形状修复（roundedRect+三角尾巴）\n• 输入框文字改为黑色\n• 发送检测辅助功能权限并提示\n• 2秒内连点5次触发 tooManyClicks 动画"
+  "version": "1.6.0",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.0/Sanshui-1.6.0.dmg",
+  "notes": "连点触发改为3秒内7次"
 }
