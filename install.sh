@@ -23,7 +23,7 @@ fi
 echo "🔨 编译中（首次约需 30 秒）..."
 cd "$SCRIPT_DIR"
 xcodebuild \
-    -project QoderPet.xcodeproj \
+    -project Sanshui.xcodeproj \
     -scheme QoderPet \
     -configuration Release \
     build \
