@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.0/Sanshui-1.6.0.dmg",
-  "notes": "连点触发改为3秒内7次"
+  "version": "1.6.1",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.1/Sanshui-1.6.1.dmg",
+  "notes": "连点触发改为10秒内5次"
 }
