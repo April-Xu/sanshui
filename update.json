@@ -1,5 +1,5 @@
 {
-  "version": "1.6.3",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.3/Sanshui-1.6.3.dmg",
-  "notes": "• 修复右键菜单「检查更新」和「开机自动启动」点击无反应"
+  "version": "1.6.4",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.4/Sanshui-1.6.4.dmg",
+  "notes": "检查更新结果不自动关闭，手动点关闭"
 }
