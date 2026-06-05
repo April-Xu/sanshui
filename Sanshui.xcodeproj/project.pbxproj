@@ -6,7 +6,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C270356A1F2343CBBB11A091 /* QoderPetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5F015519E7483BAFB08545 /* QoderPetApp.swift */; };
+		C270356A1F2343CBBB11A091 /* SanshuiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5F015519E7483BAFB08545 /* SanshuiApp.swift */; };
 		532AA478D40C438DAEAF687B /* PetWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */; };
 		230D6A764DBA40C6B774CF6C /* PetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */; };
 		286BE0FB1A164ABDA171CD67 /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A84A95C978347A9AD9AFBCB /* PetState.swift */; };
@@ -19,7 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4B5F015519E7483BAFB08545 /* QoderPetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QoderPetApp.swift; sourceTree = "<group>"; };
+		4B5F015519E7483BAFB08545 /* SanshuiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanshuiApp.swift; sourceTree = "<group>"; };
 		F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetWindowController.swift; sourceTree = "<group>"; };
 		6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewController.swift; sourceTree = "<group>"; };
 		0A84A95C978347A9AD9AFBCB /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		8821DA9FA417494A8BFBD6B1 /* QoderPet */ = {
 			isa = PBXGroup;
 			children = (
-								4B5F015519E7483BAFB08545 /* QoderPetApp.swift */,
+								4B5F015519E7483BAFB08545 /* SanshuiApp.swift */,
 				13223A94DEBF4C98BB75A672 /* PetControlBar.swift */,
 				8040651A66534D7698A88409 /* ResizeControlBar.swift */,
 				F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */,
@@ -65,7 +65,7 @@
 								E844D145EB084A41A4104644 /* spritesheet.webp */,
 				1AE500D7CC6A4C9BBE41A4FA /* Info.plist */,
 			);
-			path = QoderPet;
+			path = Sanshui;
 			sourceTree = "<group>";
 		};
 		148A23B97EED40E5ABEC91A6 /* Products */ = {
@@ -148,7 +148,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-								C270356A1F2343CBBB11A091 /* QoderPetApp.swift in Sources */,
+								C270356A1F2343CBBB11A091 /* SanshuiApp.swift in Sources */,
 				63C14FF1EC5D4BB4B00EC500 /* PetControlBar.swift in Sources */,
 				66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */,
 				532AA478D40C438DAEAF687B /* PetWindowController.swift in Sources */,
@@ -208,7 +208,7 @@
 			buildSettings = {
 				ASSTDEPLOYMENT_TARGET = 13.0;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = QoderPet/Info.plist;
+				INFOPLIST_FILE = Sanshui/Info.plist;
 				LE_BUNDLE_IDENTIFIER = com.sanshui.app;
 				MACOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanshui.app;
@@ -223,7 +223,7 @@
 			buildSettings = {
 				ASSTDEPLOYMENT_TARGET = 13.0;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = QoderPet/Info.plist;
+				INFOPLIST_FILE = Sanshui/Info.plist;
 				MACOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanshui.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
