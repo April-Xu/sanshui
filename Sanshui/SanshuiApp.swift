@@ -1,7 +1,6 @@
 import SwiftUI
 import AppKit
 import ServiceManagement
-import Sparkle
 
 @main
 struct SanshuiApp: App {
@@ -11,22 +10,27 @@ struct SanshuiApp: App {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var petWindowController: PetWindowController?
-    private var updaterController: SPUStandardUpdaterController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-
-        // 初始化 Sparkle 自动更新（每小时检查一次，见 Info.plist SUScheduledCheckInterval）
-        updaterController = SPUStandardUpdaterController(
-            startingUpdater: true,
-            updaterDelegate: nil,
-            userDriverDelegate: nil
-        )
 
         petWindowController = PetWindowController()
         petWindowController?.showWindow(nil)
 
         registerLoginItem()
+
+        // 启动后后台静默检查一次更新
+        DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
+            UpdateChecker.check(silent: true)
+        }
+    }
+
+    // MARK: - 更新
+
+    func checkForUpdates() {
+        DispatchQueue.global().async {
+            UpdateChecker.check(silent: false)
+        }
     }
 
     // MARK: - 登录自启
@@ -35,7 +39,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if #available(macOS 13.0, *) {
             try? SMAppService.mainApp.register()
         } else {
-            // macOS 12 及以下：写 LaunchAgent plist
             installLaunchAgent()
         }
     }
@@ -52,10 +55,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func checkForUpdates() {
-        updaterController?.checkForUpdates(nil)
-    }
-
     func isLoginItemEnabled() -> Bool {
         if #available(macOS 13.0, *) {
             return SMAppService.mainApp.status == .enabled
@@ -63,7 +62,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    // macOS 12 fallback
     private func installLaunchAgent() {
         guard let appPath = Bundle.main.bundlePath as String? else { return }
         let plist: [String: Any] = [

@@ -19,8 +19,7 @@
 
 		AA11BB22CC33DD44EE550001 /* StreamingOverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */; };
 		AA11BB22CC33DD44EE550002 /* TokenBubblePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */; };
-		SP0000000001 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = SP0000000002 /* Sparkle.framework */; };
-		SP0000000003 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = SP0000000002 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		UC00000000000000001 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = UC00000000000000002 /* UpdateChecker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,7 +37,7 @@
 
 		AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOverlayPanel.swift; sourceTree = "<group>"; };
 		AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBubblePanel.swift; sourceTree = "<group>"; };
-		SP0000000002 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Sparkle.framework; sourceTree = SOURCE_ROOT; };
+		UC00000000000000002 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,19 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				SP0000000001 /* Sparkle.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		SP0000000004 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				SP0000000003 /* Sparkle.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -85,9 +72,9 @@
 				BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */,
 				AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */,
 				AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */,
+				UC00000000000000002 /* UpdateChecker.swift */,
 								E844D145EB084A41A4104644 /* spritesheet.webp */,
 				BB11CC22DD33EE44FF660001 /* AppIcon.icns */,
-				SP0000000002 /* Sparkle.framework */,
 				1AE500D7CC6A4C9BBE41A4FA /* Info.plist */,
 			);
 			path = Sanshui;
@@ -111,7 +98,6 @@
 				C884B3149D9D4328A8E4D804 /* Sources */,
 				61C223E6F3024073B10321C6 /* Frameworks */,
 				6613C2FD279C4F42A40915A0 /* Resources */,
-				SP0000000004 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -185,6 +171,7 @@
 				2726B4F966E04D60A7F9EA50 /* QoderStateMonitor.swift in Sources */,
 				AA11BB22CC33DD44EE550001 /* StreamingOverlayPanel.swift in Sources */,
 				AA11BB22CC33DD44EE550002 /* TokenBubblePanel.swift in Sources */,
+				UC00000000000000001 /* UpdateChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
