@@ -1,5 +1,5 @@
 {
-  "version": "1.6.6",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.6/Sanshui-1.6.6.dmg",
-  "notes": "• 修复下载进度一直0%（KVO观察者被提前释放）\n• 下载时可取消\n• 稍后/关闭按钮浅绿黑字在左，操作按钮深绿白字在右\n• 按钮文字垂直居中\n• tooManyClicks动画loop两遍无idle闪烁"
+  "version": "1.6.7",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.7/Sanshui-1.6.7.dmg",
+  "notes": "• 修复双显示器出现两个Sanshui（canJoinAllSpaces从overlay移除）\n• 修复发送消息无反应（AppleScript→CGEvent，更可靠）"
 }
