@@ -230,6 +230,14 @@ class PetContainerView: NSView {
 
         menu.addItem(.separator())
 
+        let delegate = NSApp.delegate as? AppDelegate
+        let launchItem = NSMenuItem(title: "开机自动启动", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+        launchItem.target = self
+        launchItem.state = delegate?.isLoginItemEnabled() == true ? .on : .off
+        menu.addItem(launchItem)
+
+        menu.addItem(.separator())
+
         let quitItem = NSMenuItem(title: "退出 Sanshui", action: #selector(quit), keyEquivalent: "")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -240,6 +248,10 @@ class PetContainerView: NSView {
     @objc private func showResizeSlider() {
         guard let win = self.window, let vc = petVC else { return }
         ResizeHUD.show(petWindow: win, petVC: vc)
+    }
+
+    @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
+        (NSApp.delegate as? AppDelegate)?.toggleLaunchAtLogin(sender)
     }
 
     @objc private func quit() { NSApplication.shared.terminate(nil) }
