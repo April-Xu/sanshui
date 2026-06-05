@@ -13,6 +13,7 @@
 		D473B26033274AB484241E1B /* SpriteSheetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */; };
 		2726B4F966E04D60A7F9EA50 /* QoderStateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */; };
 		3F3CB3DE289D44018025650F /* spritesheet.webp in Resources */ = {isa = PBXBuildFile; fileRef = E844D145EB084A41A4104644 /* spritesheet.webp */; };
+		BB11CC22DD33EE44FF550001 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BB11CC22DD33EE44FF660001 /* AppIcon.icns */; };
 		F65C5665AE6747C88610BB48 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE500D7CC6A4C9BBE41A4FA /* Info.plist */; };
 		66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040651A66534D7698A88409 /* ResizeControlBar.swift */; };
 
@@ -28,6 +29,7 @@
 		D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteSheetParser.swift; sourceTree = "<group>"; };
 		BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QoderStateMonitor.swift; sourceTree = "<group>"; };
 		E844D145EB084A41A4104644 /* spritesheet.webp */ = {isa = PBXFileReference; lastKnownFileType = image.webp; path = spritesheet.webp; sourceTree = "<group>"; };
+		BB11CC22DD33EE44FF660001 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		1AE500D7CC6A4C9BBE41A4FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6C970015EA35479F91723101 /* Sanshui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sanshui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8040651A66534D7698A88409 /* ResizeControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeControlBar.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */,
 				AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */,
 								E844D145EB084A41A4104644 /* spritesheet.webp */,
+				BB11CC22DD33EE44FF660001 /* AppIcon.icns */,
 				1AE500D7CC6A4C9BBE41A4FA /* Info.plist */,
 			);
 			path = Sanshui;
@@ -144,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 								3F3CB3DE289D44018025650F /* spritesheet.webp in Resources */,
+				BB11CC22DD33EE44FF550001 /* AppIcon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
