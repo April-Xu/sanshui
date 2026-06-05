@@ -1,5 +1,5 @@
 {
   "version": "1.6.3",
   "url": "https://github.com/April-Xu/sanshui/releases/download/v1.6.3/Sanshui-1.6.3.dmg",
-  "notes": "• 修复右键菜单「检查更新」和「开机自动启动」点击无反应\n• 移除 AppDelegate 中转，直接在 PetContainerView 实现"
+  "notes": "• 修复右键菜单「检查更新」和「开机自动启动」点击无反应"
 }
