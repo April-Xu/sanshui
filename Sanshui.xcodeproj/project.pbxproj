@@ -17,6 +17,7 @@
 		66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040651A66534D7698A88409 /* ResizeControlBar.swift */; };
 		63C14FF1EC5D4BB4B00EC500 /* PetControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13223A94DEBF4C98BB75A672 /* PetControlBar.swift */; };
 		AA11BB22CC33DD44EE550001 /* StreamingOverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */; };
+		AA11BB22CC33DD44EE550002 /* TokenBubblePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		8040651A66534D7698A88409 /* ResizeControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeControlBar.swift; sourceTree = "<group>"; };
 		13223A94DEBF4C98BB75A672 /* PetControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetControlBar.swift; sourceTree = "<group>"; };
 		AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOverlayPanel.swift; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBubblePanel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				D4B2F623BEC34A2381A8B989 /* SpriteSheetParser.swift */,
 				BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */,
 				AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */,
+				AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */,
 								E844D145EB084A41A4104644 /* spritesheet.webp */,
 				1AE500D7CC6A4C9BBE41A4FA /* Info.plist */,
 			);
@@ -160,6 +163,7 @@
 				D473B26033274AB484241E1B /* SpriteSheetParser.swift in Sources */,
 				2726B4F966E04D60A7F9EA50 /* QoderStateMonitor.swift in Sources */,
 				AA11BB22CC33DD44EE550001 /* StreamingOverlayPanel.swift in Sources */,
+				AA11BB22CC33DD44EE550002 /* TokenBubblePanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

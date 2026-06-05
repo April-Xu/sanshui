@@ -47,6 +47,12 @@ class PetViewController: NSViewController {
                 StreamingOverlayPanel.current?.updateTokens(delta)
             }
         }
+        QoderStateMonitor.shared.onCompletionTokens = { [weak self] tokens in
+            DispatchQueue.main.async {
+                guard let win = self?.view.window else { return }
+                TokenBubblePanel.show(tokens: tokens, petWindow: win)
+            }
+        }
         QoderStateMonitor.shared.startMonitoring()
         // 随机漫步已移除
     }

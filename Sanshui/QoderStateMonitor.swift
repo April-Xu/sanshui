@@ -6,6 +6,8 @@ class QoderStateMonitor {
     var onStateChange: ((PetState) -> Void)?
     /// streaming 期间实时 token 更新（当前轮次 delta）
     var onLiveTokenUpdate: ((Int) -> Void)?
+    /// 完成时回调本轮 completion_tokens（从 DB 读）
+    var onCompletionTokens: ((Int) -> Void)?
 
     private(set) var currentState: PetState = .idle
 
@@ -163,6 +165,14 @@ class QoderStateMonitor {
             transition(to: .jumping, from: "log:completed")
             resetAt = Date().addingTimeInterval(1.5)
             blockQuestUntil = Date().addingTimeInterval(8)
+            // 异步读 DB 拿本轮 completion_tokens
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self else { return }
+                let ct = self.readCompletionTokensFromDB()
+                if ct > 0 {
+                    DispatchQueue.main.async { self.onCompletionTokens?(ct) }
+                }
+            }
 
         case .failed:
             transition(to: .failed, from: "log:failed")
@@ -212,6 +222,30 @@ class QoderStateMonitor {
                   let end = line[r.upperBound...].firstIndex(where: { !$0.isNumber && $0 != "-" }) else { return nil }
             return Int(line[r.upperBound..<end])
         }.last
+    }
+
+    /// 从 Qoder DB 读最新 assistant 消息的 completion_tokens
+    private func readCompletionTokensFromDB() -> Int {
+        let dbPath = NSHomeDirectory() + "/Library/Application Support/Qoder/SharedClientCache/cache/db/local.db"
+        // 用 sqlite3 命令行避免引入 SQLite 依赖
+        let task = Process()
+        task.launchPath = "/usr/bin/sqlite3"
+        task.arguments = [dbPath,
+            "SELECT token_info FROM chat_message WHERE role='assistant' AND token_info IS NOT NULL ORDER BY gmt_create DESC LIMIT 1;"]
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = Pipe()
+        do { try task.run() } catch { return 0 }
+        task.waitUntilExit()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        guard let output = String(data: data, encoding: .utf8) else { return 0 }
+        // token_info 示例：{"prompt_tokens":145415,"completion_tokens":2813,...}
+        let json = output.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let r = json.range(of: "\"completion_tokens\":"),
+           let end = json[r.upperBound...].firstIndex(where: { !$0.isNumber }) {
+            return Int(json[r.upperBound..<end]) ?? 0
+        }
+        return 0
     }
 
     // MARK: - 工具
