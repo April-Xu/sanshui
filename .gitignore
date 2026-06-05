@@ -4,3 +4,4 @@ build/
 DerivedData/
 .swiftpm/
 *.xcworkspace/xcuserdata/
+Sparkle.framework/
