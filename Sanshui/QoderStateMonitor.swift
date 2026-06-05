@@ -10,10 +10,14 @@ class QoderStateMonitor {
 
     // 记录上次看到的「最新事件时间戳」，避免重复触发旧日志里的事件
     private var lastSeenTimestamp: String = ""
-    // 完成/失败后锁定 idle 回归的时间
+    // 完成/失败后回 idle 的计时器
     private var resetAt: Date? = nil
     // 完成/失败后屏蔽 questWindow 触发的时间（避免旧日志重新触发 coding）
     private var blockQuestUntil: Date = .distantPast
+    // 最后一次看到日志活动的时间（用于替代进程检测）
+    private var lastLogActivity: Date = .distantPast
+    // 日志静止超过此时间且非 idle → 回 idle（Qoder 关闭或长时间无活动）
+    private let logIdleTimeout: TimeInterval = 30
 
     func startMonitoring() {
         // 记录启动时间，只处理启动之后的新日志行
@@ -43,21 +47,29 @@ class QoderStateMonitor {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self else { return }
 
-            let running = self.isQoderRunning()
-            guard running else {
-                DispatchQueue.main.async { self.transition(to: .idle, from: "not-running") }
-                return
-            }
-
             guard let (allLines, questHasNew) = self.recentLogLines(count: 80) else { return }
             let newLines = allLines.filter { $0 > self.lastSeenTimestamp }
-            if newLines.isEmpty { return }
+
+            // 无新日志：距上次活动超 30s 才回 idle，不依赖进程检测
+            if newLines.isEmpty {
+                DispatchQueue.main.async {
+                    if self.currentState != .idle,
+                       self.lastLogActivity != .distantPast,
+                       Date().timeIntervalSince(self.lastLogActivity) > self.logIdleTimeout {
+                        self.transition(to: .idle, from: "log-timeout")
+                    }
+                }
+                return
+            }
 
             let latest = String(newLines.last?.prefix(23) ?? "")  // 毫秒精度，避免同秒内重复处理
             let event = self.parseEvent(from: newLines, fromQuestWindow: questHasNew)
 
             DispatchQueue.main.async {
-                if !latest.isEmpty { self.lastSeenTimestamp = latest }
+                if !latest.isEmpty {
+                    self.lastSeenTimestamp = latest
+                    self.lastLogActivity = Date()
+                }
                 if let event { self.handle(event) }
             }
         }
@@ -148,14 +160,6 @@ class QoderStateMonitor {
     }
 
     // MARK: - 工具
-
-    private func isQoderRunning() -> Bool {
-        let t = Process(); t.launchPath = "/usr/bin/pgrep"
-        t.arguments = ["-f", "Qoder.app/Contents/MacOS"]
-        t.standardOutput = Pipe(); t.standardError = Pipe()
-        try? t.run(); t.waitUntilExit()
-        return t.terminationStatus == 0
-    }
 
     private func transition(to new: PetState, from source: String) {
         guard new != currentState else { return }
