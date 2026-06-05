@@ -14,9 +14,6 @@ class QoderStateMonitor {
     private var resetAt: Date? = nil
     // 完成/失败后屏蔽 questWindow 触发的时间（避免旧日志重新触发 coding）
     private var blockQuestUntil: Date = .distantPast
-    // streaming 时随机插入 waiting 动画的概率（每次 poll 约 1.5s，概率 ~5%）
-    private let waitingFlashChance: Double = 0.05
-    private var lastWaitingFlash: Date = .distantPast
 
     func startMonitoring() {
         // 记录启动时间，只处理启动之后的新日志行
@@ -130,19 +127,6 @@ class QoderStateMonitor {
         switch event {
         case .streaming:
             // 已在 coding 时，随机偶尔闪一下 waiting 动画（至少间隔 20s）
-            if currentState == .coding,
-               Date().timeIntervalSince(lastWaitingFlash) > 20,
-               Double.random(in: 0...1) < waitingFlashChance {
-                lastWaitingFlash = Date()
-                transition(to: .waiting, from: "random-flash")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
-                    // 只要还在 waiting（没被其他事件打断）就强制回 coding
-                    if self?.currentState == .waiting {
-                        self?.transition(to: .coding, from: "random-flash-end")
-                    }
-                }
-                return
-            }
             transition(to: .coding, from: "log:streaming")
 
         case .completed:
