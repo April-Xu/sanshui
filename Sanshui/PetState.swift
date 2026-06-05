@@ -16,7 +16,7 @@ enum PetState: String, CaseIterable {
     case jumping     // 跳跃，预留 (row 4)
     case failed      // 报错崩了 (row 5)
     case waiting     // 等待批准 (row 6)
-    case thinking    // Qoder 思考中 = waiting 行复用 (row 6)
+    case thinking    // agent 思考中 = waiting 行复用 (row 6)
     case coding      // 正在生成代码 (row 7)
     case review      // 完成检查 (row 8)
     case sunburn     // W 坐姿，外套半脱 (row 9)

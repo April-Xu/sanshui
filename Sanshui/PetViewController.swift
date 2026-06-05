@@ -282,12 +282,40 @@ class PetContainerView: NSView {
     }
 
     func clampWindowToScreen() {
-        guard let window = self.window, let screen = NSScreen.main?.visibleFrame else { return }
+        guard let window = self.window else { return }
         var f = window.frame
-        f.origin.x = max(screen.minX - f.width + screenMargin,
-                    min(screen.maxX - screenMargin, f.origin.x))
-        f.origin.y = max(screen.minY - f.height + screenMargin,
-                    min(screen.maxY - screenMargin, f.origin.y))
+
+        // 找宠物当前所在的显示器（用窗口中心点匹配）
+        let center = CGPoint(x: f.midX, y: f.midY)
+        let targetScreen = NSScreen.screens.first { $0.frame.contains(center) }
+            ?? NSScreen.screens.min(by: { a, b in
+                // 没有精确命中时取距离最近的屏幕
+                let da = hypot(a.frame.midX - center.x, a.frame.midY - center.y)
+                let db = hypot(b.frame.midX - center.x, b.frame.midY - center.y)
+                return da < db
+            })
+
+        guard let screen = targetScreen?.visibleFrame else { return }
+
+        // 每边至少留 screenMargin 像素在屏幕内，允许跨越其他显示器
+        // （不限制到单屏：只要宠物没完全飞出所有屏幕组成的联合区域就行）
+        let allScreensUnion = NSScreen.screens.reduce(CGRect.null) { $0.union($1.visibleFrame) }
+
+        f.origin.x = max(allScreensUnion.minX - f.width + screenMargin,
+                         min(allScreensUnion.maxX - screenMargin, f.origin.x))
+        f.origin.y = max(allScreensUnion.minY - f.height + screenMargin,
+                         min(allScreensUnion.maxY - screenMargin, f.origin.y))
+
+        // 额外保证：在当前目标屏幕内至少有一边可见（防止卡在两屏夹缝中消失）
+        let visibleInTarget = f.intersection(screen)
+        if visibleInTarget.width < screenMargin && visibleInTarget.height < screenMargin {
+            // 完全不在目标屏内，拉回到最近边
+            f.origin.x = max(screen.minX - f.width + screenMargin,
+                             min(screen.maxX - screenMargin, f.origin.x))
+            f.origin.y = max(screen.minY - f.height + screenMargin,
+                             min(screen.maxY - screenMargin, f.origin.y))
+        }
+
         if f.origin != window.frame.origin { window.setFrameOrigin(f.origin) }
     }
 }

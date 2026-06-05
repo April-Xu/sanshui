@@ -71,7 +71,7 @@ class StreamingOverlayPanel: NSPanel {
         contentView = cv
 
         // 标题行
-        let title = NSTextField(labelWithString: "⌨ Qoder 输出中")
+        let title = NSTextField(labelWithString: "⌨ Agent 输出中")
         title.frame = NSRect(x: 8, y: H - 18, width: 130, height: 14)
         title.font = .monospacedSystemFont(ofSize: 10, weight: .bold)
         title.textColor = NSColor(red: 0.1, green: 0.35, blue: 0.1, alpha: 1)
@@ -95,7 +95,7 @@ class StreamingOverlayPanel: NSPanel {
         // 回复输入框
         replyField = PixelTextField(frame: NSRect(x: 8, y: 22, width: W - 60, height: 20))
         replyField.font = .systemFont(ofSize: 10)
-        replyField.placeholderString = "回复 Qoder…"
+        replyField.placeholderString = "回复 Agent…"
         replyField.target = self
         replyField.action = #selector(sendReply)
         cv.addSubview(replyField)
@@ -107,7 +107,7 @@ class StreamingOverlayPanel: NSPanel {
         cv.addSubview(sendBtn)
 
         // 提示文字
-        let hint = NSTextField(labelWithString: "⏎ 发送 · 回复后 Qoder 继续工作")
+        let hint = NSTextField(labelWithString: "⏎ 发送 · 回复后 Agent 继续工作")
         hint.frame = NSRect(x: 8, y: 6, width: W - 16, height: 12)
         hint.font = .systemFont(ofSize: 8)
         hint.textColor = NSColor(white: 0.5, alpha: 1)
@@ -164,9 +164,13 @@ class StreamingOverlayPanel: NSPanel {
         let W = frame.width, H = frame.height
         var x = pw.frame.midX - W / 2
         var y = pw.frame.maxY + 8
-        if let screen = NSScreen.main?.visibleFrame {
-            x = max(screen.minX + 4, min(screen.maxX - W - 4, x))
-            if y + H > screen.maxY { y = pw.frame.minY - H - 8 }
+        // 跟随宠物所在的显示器
+        let center = CGPoint(x: pw.frame.midX, y: pw.frame.midY)
+        let screen = (NSScreen.screens.first { $0.frame.contains(center) }
+            ?? NSScreen.main)?.visibleFrame
+        if let s = screen {
+            x = max(s.minX + 4, min(s.maxX - W - 4, x))
+            if y + H > s.maxY { y = pw.frame.minY - H - 8 }
         }
         setFrameOrigin(CGPoint(x: x, y: y))
     }

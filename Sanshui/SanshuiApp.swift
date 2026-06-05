@@ -3,7 +3,7 @@ import AppKit
 import ServiceManagement
 
 @main
-struct QoderPetApp: App {
+struct SanshuiApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene { Settings { EmptyView() } }
 }
@@ -55,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let appPath = Bundle.main.bundlePath as String? else { return }
         let plist: [String: Any] = [
             "Label": "com.sanshui.app",
-            "ProgramArguments": ["\(appPath)/Contents/MacOS/QoderPet"],
+            "ProgramArguments": ["\(appPath)/Contents/MacOS/Sanshui"],
             "RunAtLoad": true,
             "KeepAlive": false
         ]

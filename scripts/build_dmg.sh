@@ -1,12 +1,11 @@
 #!/bin/bash
 # 打包 Sanshui 为 .dmg 分发包
 # 使用方式: ./scripts/build_dmg.sh [version]
-# 注意：项目已改名 Sanshui，但 scheme/target 仍叫 QoderPet
 
 set -e
 
 VERSION=${1:-"1.0.0"}
-APP_NAME="QoderPet"       # Xcode scheme/target 名
+APP_NAME="Sanshui"       
 DMG_DISPLAY="Sanshui"     # DMG 卷名和文件名
 BUILD_DIR="build"
 DMG_NAME="${DMG_DISPLAY}-${VERSION}.dmg"

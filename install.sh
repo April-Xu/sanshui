@@ -24,13 +24,13 @@ echo "🔨 编译中（首次约需 30 秒）..."
 cd "$SCRIPT_DIR"
 xcodebuild \
     -project Sanshui.xcodeproj \
-    -scheme QoderPet \
+    -scheme Sanshui \
     -configuration Release \
     build \
     CONFIGURATION_BUILD_DIR="$SCRIPT_DIR/build/Release" \
     -quiet 2>&1 | grep -E "error:|warning:|BUILD" || true
 
-BUILD_APP="$SCRIPT_DIR/build/Release/QoderPet.app"
+BUILD_APP="$SCRIPT_DIR/build/Release/Sanshui.app"
 if [ ! -d "$BUILD_APP" ]; then
     echo "❌ 编译失败，请检查 Xcode 是否正确安装"
     exit 1
@@ -38,7 +38,7 @@ fi
 echo "✅ 编译完成"
 
 # 停掉旧版本
-pkill -x QoderPet 2>/dev/null || pkill -x "$APP_NAME" 2>/dev/null || true
+pkill -x Sanshui 2>/dev/null || pkill -x "$APP_NAME" 2>/dev/null || true
 sleep 0.5
 
 # 安装到 ~/Applications（不需要 sudo，且不触发 Gatekeeper）
@@ -56,7 +56,7 @@ cat > "$PLIST_PATH" << PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
     <key>Label</key><string>com.sanshui.app</string>
-    <key>ProgramArguments</key><array><string>$APP_DEST/Contents/MacOS/QoderPet</string></array>
+    <key>ProgramArguments</key><array><string>$APP_DEST/Contents/MacOS/Sanshui</string></array>
     <key>RunAtLoad</key><true/>
     <key>KeepAlive</key><false/>
 </dict></plist>

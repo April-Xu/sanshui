@@ -29,7 +29,7 @@
 		BDB4EAF3C23F40A68CCE150C /* QoderStateMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QoderStateMonitor.swift; sourceTree = "<group>"; };
 		E844D145EB084A41A4104644 /* spritesheet.webp */ = {isa = PBXFileReference; lastKnownFileType = image.webp; path = spritesheet.webp; sourceTree = "<group>"; };
 		1AE500D7CC6A4C9BBE41A4FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6C970015EA35479F91723101 /* QoderPet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QoderPet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C970015EA35479F91723101 /* Sanshui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sanshui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8040651A66534D7698A88409 /* ResizeControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeControlBar.swift; sourceTree = "<group>"; };
 
 		AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOverlayPanel.swift; sourceTree = "<group>"; };
@@ -50,12 +50,12 @@
 		6FA224D3FDDA4D68815ECB0F = {
 			isa = PBXGroup;
 			children = (
-				8821DA9FA417494A8BFBD6B1 /* QoderPet */,
+				8821DA9FA417494A8BFBD6B1 /* Sanshui */,
 				148A23B97EED40E5ABEC91A6 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		8821DA9FA417494A8BFBD6B1 /* QoderPet */ = {
+		8821DA9FA417494A8BFBD6B1 /* Sanshui */ = {
 			isa = PBXGroup;
 			children = (
 								4B5F015519E7483BAFB08545 /* SanshuiApp.swift */,
@@ -77,7 +77,7 @@
 		148A23B97EED40E5ABEC91A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6C970015EA35479F91723101 /* QoderPet.app */,
+				6C970015EA35479F91723101 /* Sanshui.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		ED59DD3C7BEE4232B9CC96F8 /* QoderPet */ = {
+		ED59DD3C7BEE4232B9CC96F8 /* Sanshui */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "QoderPet" */;
+			buildConfigurationList = 9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "Sanshui" */;
 			buildPhases = (
 				C884B3149D9D4328A8E4D804 /* Sources */,
 				61C223E6F3024073B10321C6 /* Frameworks */,
@@ -97,11 +97,11 @@
 			);
 			dependencies = (
 			);
-			name = QoderPet;
+			name = Sanshui;
 			packageProductDependencies = (
 			);
-			productName = QoderPet;
-			productReference = 6C970015EA35479F91723101 /* QoderPet.app */;
+			productName = Sanshui;
+			productReference = 6C970015EA35479F91723101 /* Sanshui.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -119,7 +119,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "QoderPet" */;
+			buildConfigurationList = A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "Sanshui" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -133,7 +133,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				ED59DD3C7BEE4232B9CC96F8 /* QoderPet */,
+				ED59DD3C7BEE4232B9CC96F8 /* Sanshui */,
 			);
 		};
 /* End PBXProject section */
@@ -243,7 +243,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "QoderPet" */ = {
+		A5F646D63C684BE0AA6E1468 /* Build configuration list for PBXProject "Sanshui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE720D2DDC2041D4B25EE893 /* Debug */,
@@ -252,7 +252,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "QoderPet" */ = {
+		9104D22F273B4D999D2EEFCE /* Build configuration list for PBXNativeTarget "Sanshui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				946BDE767BAF484FAA513312 /* Debug */,

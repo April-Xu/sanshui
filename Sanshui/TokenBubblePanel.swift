@@ -35,12 +35,15 @@ class TokenBubblePanel: NSPanel {
         let tailH: CGFloat = 10                   // 尾巴高度
         let totalH = H + tailH
 
-        // 定位：宠物上方
+        // 定位：宠物上方（跟随宠物所在显示器）
         var x = petWindow.frame.midX - W / 2
         var y = petWindow.frame.maxY + 4
-        if let screen = NSScreen.main?.visibleFrame {
-            x = max(screen.minX + 4, min(screen.maxX - W - 4, x))
-            if y + totalH > screen.maxY { y = petWindow.frame.minY - totalH - 4 }
+        let center = CGPoint(x: petWindow.frame.midX, y: petWindow.frame.midY)
+        let screen = (NSScreen.screens.first { $0.frame.contains(center) }
+            ?? NSScreen.main)?.visibleFrame
+        if let s = screen {
+            x = max(s.minX + 4, min(s.maxX - W - 4, x))
+            if y + totalH > s.maxY { y = petWindow.frame.minY - totalH - 4 }
         }
 
         super.init(contentRect: NSRect(x: x, y: y, width: W, height: totalH),
