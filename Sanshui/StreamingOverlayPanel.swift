@@ -42,6 +42,8 @@ class StreamingOverlayPanel: NSPanel {
         level = .floating
         collectionBehavior = [.canJoinAllSpaces, .stationary]
         hasShadow = true
+        // 允许成为 key window，让输入框能接收键盘事件
+        becomesKeyOnlyIfNeeded = false
 
         buildUI(W: W, H: H)
         reposition()
@@ -155,6 +157,8 @@ class StreamingOverlayPanel: NSPanel {
         """
         var err: NSDictionary?
         NSAppleScript(source: script)?.executeAndReturnError(&err)
+        // 发完把 key 交还给宠物窗口，不持续抢占焦点
+        petWindow?.makeKey()
     }
 
     // MARK: - 定位
@@ -174,6 +178,9 @@ class StreamingOverlayPanel: NSPanel {
         }
         setFrameOrigin(CGPoint(x: x, y: y))
     }
+
+    // 允许成为 key window，输入框才能打字
+    override var canBecomeKey: Bool { true }
 
     func dismiss() {
         dotTimer?.invalidate()
@@ -280,5 +287,14 @@ class PixelTextField: NSTextField {
         drawsBackground = true
         backgroundColor = .white
         focusRingType = .none
+    }
+
+    // 点击输入框时让所在 panel 成为 key window，这样才能打字
+    override func mouseDown(with event: NSEvent) {
+        if let panel = window, !panel.isKeyWindow {
+            panel.makeKey()
+            panel.makeFirstResponder(self)
+        }
+        super.mouseDown(with: event)
     }
 }
