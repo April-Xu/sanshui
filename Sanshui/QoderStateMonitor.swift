@@ -125,13 +125,9 @@ class QoderStateMonitor {
         // 精准匹配"正在工作"的信号，排除 UI 交互日志
         if Date() > blockQuestUntil {
             for line in lines.reversed() {
-                // 流式输出中
-                if line.contains("\"state\":\"streaming\"") { return .streaming }
-                // thinking 阶段：ACPBlocksService 有 progressLen 递增但 state 不一定是 streaming
-                // 同时排除仅含 rebindSessionAuthority（点输入框触发）和 ChatViewManagerService（定时保存）
+                // ACPBlocksService 明确处于 streaming 状态才触发
                 if line.contains("ACPBlocksService.processProgress")
-                    && !line.contains("rebindSession")
-                    && !line.contains("ChatViewManagerService") {
+                    && line.contains("\"state\":\"streaming\"") {
                     return .streaming
                 }
             }
