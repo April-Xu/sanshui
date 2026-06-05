@@ -45,21 +45,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "显示 / 隐藏 Sanshui", action: #selector(togglePet), keyEquivalent: "")
             .target = self
 
-        menu.addItem(.separator())
-
-        // 手动切换状态（测试用）
-        let statesMenu = NSMenu()
-        for state in PetState.allCases where ![.walking, .jumping].contains(state) {
-            let item = NSMenuItem(title: state.displayName,
-                                  action: #selector(forceState(_:)),
-                                  keyEquivalent: "")
-            item.representedObject = state.rawValue
-            item.target = self
-            statesMenu.addItem(item)
-        }
-        let stateItem = NSMenuItem(title: "手动切换状态", action: nil, keyEquivalent: "")
-        stateItem.submenu = statesMenu
-        menu.addItem(stateItem)
 
         menu.addItem(.separator())
 
