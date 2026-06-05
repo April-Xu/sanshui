@@ -12,7 +12,6 @@ import Foundation
 // Row 9: sunburn-shy  Row 10: sunburn-swim
 enum PetState: String, CaseIterable {
     case idle        // 待机 (row 0)
-    case walking     // 漫步，内部用，实际切 row1/2
     case waving      // 挥手 (row 3)
     case jumping     // 跳跃，预留 (row 4)
     case failed      // 报错崩了 (row 5)
@@ -26,7 +25,6 @@ enum PetState: String, CaseIterable {
     var displayName: String {
         switch self {
         case .idle:     return "😊 待机"
-        case .walking:  return "🚶 漫步"
         case .waving:   return "👋 打招呼"
         case .jumping:  return "🎵 跳跃"
         case .failed:   return "😵 报错"
@@ -42,7 +40,6 @@ enum PetState: String, CaseIterable {
     var animationConfig: AnimationConfig {
         switch self {
         case .idle:     return AnimationConfig(row: 0, frameCount: 6, fps: 8)
-        case .walking:  return AnimationConfig(row: 1, frameCount: 8, fps: 10)
         case .waving:   return AnimationConfig(row: 3, frameCount: 4, fps: 8)
         case .jumping:  return AnimationConfig(row: 4, frameCount: 5, fps: 10)
         case .failed:   return AnimationConfig(row: 5, frameCount: 8, fps: 5)

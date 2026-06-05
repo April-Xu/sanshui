@@ -15,7 +15,7 @@
 		3F3CB3DE289D44018025650F /* spritesheet.webp in Resources */ = {isa = PBXBuildFile; fileRef = E844D145EB084A41A4104644 /* spritesheet.webp */; };
 		F65C5665AE6747C88610BB48 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE500D7CC6A4C9BBE41A4FA /* Info.plist */; };
 		66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040651A66534D7698A88409 /* ResizeControlBar.swift */; };
-		63C14FF1EC5D4BB4B00EC500 /* PetControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13223A94DEBF4C98BB75A672 /* PetControlBar.swift */; };
+
 		AA11BB22CC33DD44EE550001 /* StreamingOverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */; };
 		AA11BB22CC33DD44EE550002 /* TokenBubblePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */; };
 /* End PBXBuildFile section */
@@ -31,7 +31,7 @@
 		1AE500D7CC6A4C9BBE41A4FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6C970015EA35479F91723101 /* QoderPet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QoderPet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8040651A66534D7698A88409 /* ResizeControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeControlBar.swift; sourceTree = "<group>"; };
-		13223A94DEBF4C98BB75A672 /* PetControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetControlBar.swift; sourceTree = "<group>"; };
+
 		AA11BB22CC33DD44EE660001 /* StreamingOverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOverlayPanel.swift; sourceTree = "<group>"; };
 		AA11BB22CC33DD44EE660002 /* TokenBubblePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBubblePanel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,7 +59,7 @@
 			isa = PBXGroup;
 			children = (
 								4B5F015519E7483BAFB08545 /* SanshuiApp.swift */,
-				13223A94DEBF4C98BB75A672 /* PetControlBar.swift */,
+
 				8040651A66534D7698A88409 /* ResizeControlBar.swift */,
 				F7F8D01CD3DD4FA4BEC0C527 /* PetWindowController.swift */,
 				6D5E1942FA254E00BCDFEF4D /* PetViewController.swift */,
@@ -155,7 +155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 								C270356A1F2343CBBB11A091 /* SanshuiApp.swift in Sources */,
-				63C14FF1EC5D4BB4B00EC500 /* PetControlBar.swift in Sources */,
+
 				66E68DB9CD3E474E8B44A956 /* ResizeControlBar.swift in Sources */,
 				532AA478D40C438DAEAF687B /* PetWindowController.swift in Sources */,
 				230D6A764DBA40C6B774CF6C /* PetViewController.swift in Sources */,

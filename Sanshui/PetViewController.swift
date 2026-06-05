@@ -114,15 +114,6 @@ class PetViewController: NSViewController {
         applyState(state)
     }
 
-    func setStateManually(_ state: PetState) {
-        isManualState = true
-        QoderStateMonitor.shared.forceState(state)
-        applyState(state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-            self?.isManualState = false
-        }
-    }
-
     private func applyState(_ state: PetState) {
         guard state != currentState else { return }
         currentState = state
@@ -195,28 +186,6 @@ class PetViewController: NSViewController {
         }
     }
 
-    func playSequence(states: [PetState], then completion: @escaping () -> Void) {
-        guard let first = states.first else {
-            completion()
-            return
-        }
-
-        isManualState = true
-        startAnimation(for: first)
-        let config = first.animationConfig
-        let duration = Double(config.frameCount) / config.fps
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
-            guard let self else { return }
-            let remaining = Array(states.dropFirst())
-            if remaining.isEmpty {
-                self.isManualState = false
-                self.startAnimation(for: self.currentState)
-                completion()
-            } else {
-                self.playSequence(states: remaining, then: completion)
-            }
-        }
-    }
 }
 
 final class SpriteImageView: NSImageView {

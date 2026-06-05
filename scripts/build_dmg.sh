@@ -1,47 +1,36 @@
 #!/bin/bash
-# 打包 QoderPet 为 .dmg 分发包
+# 打包 Sanshui 为 .dmg 分发包
 # 使用方式: ./scripts/build_dmg.sh [version]
+# 注意：项目已改名 Sanshui，但 scheme/target 仍叫 QoderPet
 
 set -e
 
 VERSION=${1:-"1.0.0"}
-APP_NAME="QoderPet"
+APP_NAME="QoderPet"       # Xcode scheme/target 名
+DMG_DISPLAY="Sanshui"     # DMG 卷名和文件名
 BUILD_DIR="build"
-DMG_NAME="${APP_NAME}-${VERSION}.dmg"
+DMG_NAME="${DMG_DISPLAY}-${VERSION}.dmg"
 
-echo "==> 构建 ${APP_NAME} v${VERSION}"
+echo "==> 构建 ${DMG_DISPLAY} v${VERSION}"
 
-# 1. 用 xcodebuild 编译
+# 1. 用 xcodebuild build 直接输出 .app（保留 AppIcon.icns 等 Resources）
 xcodebuild \
-  -project "${APP_NAME}.xcodeproj" \
+  -project "Sanshui.xcodeproj" \
   -scheme "${APP_NAME}" \
   -configuration Release \
-  -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-  archive
+  CONFIGURATION_BUILD_DIR="$(pwd)/${BUILD_DIR}/Release" \
+  build
 
-# 2. 导出 .app
-xcodebuild \
-  -exportArchive \
-  -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-  -exportOptionsPlist "scripts/ExportOptions.plist" \
-  -exportPath "${BUILD_DIR}/export"
+APP_PATH="${BUILD_DIR}/Release/${APP_NAME}.app"
 
-APP_PATH="${BUILD_DIR}/export/${APP_NAME}.app"
-
-# 3. 如果有开发者证书，进行公证（可选，没证书跳过）
-# codesign --force --deep --sign "Developer ID Application: Your Name (TEAMID)" "${APP_PATH}"
-# xcrun notarytool submit "${APP_PATH}" --apple-id "your@email.com" --password "@keychain:AC_PASSWORD" --team-id "TEAMID" --wait
-
-# 4. 创建 DMG
+# 2. 创建 DMG（带 Applications 软链接）
 echo "==> 创建 DMG..."
 mkdir -p "${BUILD_DIR}/dmg_staging"
 cp -r "${APP_PATH}" "${BUILD_DIR}/dmg_staging/"
-
-# 创建 Applications 软链接
 ln -sf /Applications "${BUILD_DIR}/dmg_staging/Applications"
 
 hdiutil create \
-  -volname "${APP_NAME}" \
+  -volname "${DMG_DISPLAY}" \
   -srcfolder "${BUILD_DIR}/dmg_staging" \
   -ov \
   -format UDZO \

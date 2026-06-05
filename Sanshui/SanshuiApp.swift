@@ -10,7 +10,6 @@ struct QoderPetApp: App {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var petWindowController: PetWindowController?
-    var statusItem: NSStatusItem?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
