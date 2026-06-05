@@ -1,5 +1,5 @@
 {
-  "version": "1.5.8",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.8/Sanshui-1.5.8.dmg",
-  "notes": "• 检查更新浮层移到宠物上方，显示检查/下载/安装状态\n• 修复点击无反应（NSAlert 替换为自定义浮层）\n• 错误信息就地显示，3秒自动关"
+  "version": "1.5.9",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.9/Sanshui-1.5.9.dmg",
+  "notes": "• 气泡形状修复（roundedRect+三角尾巴）\n• 输入框文字改为黑色\n• 发送检测辅助功能权限并提示\n• 2秒内连点5次触发 tooManyClicks 动画"
 }
