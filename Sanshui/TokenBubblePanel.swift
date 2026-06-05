@@ -73,27 +73,22 @@ class TokenBubblePanel: NSPanel {
                                 bubbleH: H, tailH: tailH)
         contentView = bubble
 
-        // Emoji 角色
-        let emoji = NSTextField(labelWithString: "🐾")
-        emoji.frame = NSRect(x: 10, y: totalH - 30, width: 22, height: 22)
-        emoji.font = .systemFont(ofSize: 16)
-        bubble.addSubview(emoji)
-
-        // 主文字
         let tokenStr = tokens < 1000
             ? "\(tokens)"
             : String(format: "%.1fk", Double(tokens) / 1000)
 
+        // 主文字（上方留 10pt 内边距）
         let msg = NSTextField(labelWithString: "哥哥我好了！")
-        msg.frame = NSRect(x: 36, y: totalH - 26, width: W - 44, height: 18)
-        msg.font = .systemFont(ofSize: 12, weight: .semibold)
+        msg.frame = NSRect(x: 14, y: totalH - 10 - 20, width: W - 20, height: 20)
+        msg.font = .systemFont(ofSize: 13, weight: .semibold)
         msg.textColor = NSColor(red: 0.08, green: 0.08, blue: 0.08, alpha: 1)
         bubble.addSubview(msg)
 
-        let sub = NSTextField(labelWithString: "用了 \(tokenStr) token ✨")
-        sub.frame = NSRect(x: 36, y: totalH - 44, width: W - 44, height: 16)
-        sub.font = .monospacedDigitSystemFont(ofSize: 10, weight: .regular)
-        sub.textColor = NSColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 1)
+        // token 行（同字体，稍小，颜色加深更清晰）
+        let sub = NSTextField(labelWithString: "用了 \(tokenStr) token ❤️")
+        sub.frame = NSRect(x: 14, y: totalH - 10 - 20 - 20, width: W - 20, height: 18)
+        sub.font = .systemFont(ofSize: 12, weight: .regular)
+        sub.textColor = NSColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1)
         bubble.addSubview(sub)
     }
 }
