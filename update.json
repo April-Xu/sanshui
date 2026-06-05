@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.1/Sanshui-1.5.1.dmg",
-  "notes": "• 移除 Sparkle，改用轻量更新检查（兼容未签名 app）\n• 右键「检查更新」现在真正有反应了\n• 启动后 5 秒自动后台检查一次\n• Streaming overlay 输入框修复"
+  "version": "1.5.2",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.2/Sanshui-1.5.2.dmg",
+  "notes": "• 右键「检查更新」自动下载安装，无需浏览器\n• App 全面改名 Sanshui\n• 多显示器拖拽边界修复\n• Streaming overlay 输入框可打字\n• Token 气泡样式优化"
 }
