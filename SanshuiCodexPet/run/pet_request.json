@@ -1,0 +1,62 @@
+{
+  "pet_id": "sanshui",
+  "display_name": "Sanshui",
+  "description": "A pastel coding pet adapted from the Sanshui atlas for Codex custom pets.",
+  "source_atlas": "/Users/miaojunxu/Documents/Claude/Projects/Sanshui/Sanshui/spritesheet.webp",
+  "notes": "Built from the Sanshui atlas rows already mapped to the Codex 9-state contract.",
+  "cell": {
+    "width": 192,
+    "height": 208
+  },
+  "atlas": {
+    "columns": 8,
+    "rows": 9
+  },
+  "row_specs": [
+    {
+      "state": "idle",
+      "row": 0,
+      "frame_count": 6
+    },
+    {
+      "state": "running-right",
+      "row": 1,
+      "frame_count": 8
+    },
+    {
+      "state": "running-left",
+      "row": 2,
+      "frame_count": 8
+    },
+    {
+      "state": "waving",
+      "row": 3,
+      "frame_count": 4
+    },
+    {
+      "state": "jumping",
+      "row": 4,
+      "frame_count": 5
+    },
+    {
+      "state": "failed",
+      "row": 5,
+      "frame_count": 8
+    },
+    {
+      "state": "waiting",
+      "row": 6,
+      "frame_count": 6
+    },
+    {
+      "state": "running",
+      "row": 7,
+      "frame_count": 6
+    },
+    {
+      "state": "review",
+      "row": 8,
+      "frame_count": 6
+    }
+  ]
+}
