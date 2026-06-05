@@ -1,5 +1,5 @@
 {
-  "version": "1.5.6",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.6/Sanshui-1.5.6.dmg",
-  "notes": "修复检查更新无反应（UI 操作误在后台线程调用）"
+  "version": "1.5.7",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.7/Sanshui-1.5.7.dmg",
+  "notes": "• 修复 streaming 时 token 显示为 0\n• jumping 动画和 token 气泡同时结束（均延长至 3.5s）"
 }
