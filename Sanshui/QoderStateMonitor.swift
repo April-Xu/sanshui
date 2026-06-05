@@ -14,9 +14,9 @@ class QoderStateMonitor {
     private var resetAt: Date? = nil
     // 完成/失败后屏蔽 questWindow 触发的时间（避免旧日志重新触发 coding）
     private var blockQuestUntil: Date = .distantPast
-    // streaming 静止超过此阈值 → waiting（在等用户确认）
-    private let streamingIdleThreshold: TimeInterval = 9
-    private var lastStreamingActivity: Date = .distantPast
+    // streaming 时随机插入 waiting 动画的概率（每次 poll 约 1.5s，概率 ~5%）
+    private let waitingFlashChance: Double = 0.05
+    private var lastWaitingFlash: Date = .distantPast
 
     func startMonitoring() {
         // 记录启动时间，只处理启动之后的新日志行
@@ -54,16 +54,7 @@ class QoderStateMonitor {
 
             guard let (allLines, questHasNew) = self.recentLogLines(count: 80) else { return }
             let newLines = allLines.filter { $0 > self.lastSeenTimestamp }
-            // 无新日志：如果正在 coding，检查是否已静止太久 → waiting
-            if newLines.isEmpty {
-                DispatchQueue.main.async {
-                    if self.currentState == .coding,
-                       Date().timeIntervalSince(self.lastStreamingActivity) > self.streamingIdleThreshold {
-                        self.transition(to: .waiting, from: "stream-idle")
-                    }
-                }
-                return
-            }
+            if newLines.isEmpty { return }
 
             let latest = String(newLines.last?.prefix(23) ?? "")  // 毫秒精度，避免同秒内重复处理
             let event = self.parseEvent(from: newLines, fromQuestWindow: questHasNew)
@@ -140,17 +131,27 @@ class QoderStateMonitor {
     private func handle(_ event: LogEvent) {
         switch event {
         case .streaming:
-            lastStreamingActivity = Date()
+            // 已在 coding 时，随机偶尔闪一下 waiting 动画（至少间隔 20s）
+            if currentState == .coding,
+               Date().timeIntervalSince(lastWaitingFlash) > 20,
+               Double.random(in: 0...1) < waitingFlashChance {
+                lastWaitingFlash = Date()
+                onStateChange?(.waiting)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
+                    guard self?.currentState == .waiting else { return }
+                    self?.currentState = .coding
+                    self?.onStateChange?(.coding)
+                }
+                return
+            }
             transition(to: .coding, from: "log:streaming")
 
         case .completed:
-            lastStreamingActivity = .distantPast
             transition(to: .jumping, from: "log:completed")
             resetAt = Date().addingTimeInterval(1.5)
             blockQuestUntil = Date().addingTimeInterval(8)
 
         case .failed:
-            lastStreamingActivity = .distantPast
             transition(to: .failed, from: "log:failed")
             resetAt = Date().addingTimeInterval(1.5)
             blockQuestUntil = Date().addingTimeInterval(8)
