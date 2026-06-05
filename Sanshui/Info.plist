@@ -20,5 +20,11 @@
     <true/>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
+    <key>SUFeedURL</key>
+    <string>https://raw.githubusercontent.com/April-Xu/sanshui/codex/sanshui-codex-pet/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>G8nZXbtPE6sv/r+QHrn1tqQk6kEEPucLF4EvsdSvOTE=</string>
+    <key>SUScheduledCheckInterval</key>
+    <integer>3600</integer>
 </dict>
 </plist>

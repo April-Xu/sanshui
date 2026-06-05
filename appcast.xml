@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Sanshui</title>
+        <link>https://github.com/April-Xu/sanshui</link>
+        <description>Sanshui desktop pet update feed</description>
+        <language>zh-cn</language>
+        <item>
+            <title>Sanshui 1.5.0</title>
+            <pubDate>Thu, 05 Jun 2026 19:26:00 +0800</pubDate>
+            <sparkle:version>1.5.0</sparkle:version>
+            <sparkle:shortVersionString>1.5.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://github.com/April-Xu/sanshui/releases/download/v1.5.0/Sanshui-1.5.0.dmg"
+                sparkle:edSignature="eTtSUiYU64LblcqdfQxmZTqK/eU8CrovFE+y/UvhJ7XVd37aLLRFQJnxWpc7h41UedqLjcT6YhPrX5ISrvrmAg=="
+                length="9189157"
+                type="application/octet-stream"/>
+        </item>
+    </channel>
+</rss>

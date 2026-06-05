@@ -218,6 +218,10 @@ class PetContainerView: NSView {
         resizeItem.target = self
         menu.addItem(resizeItem)
 
+        let updateItem = NSMenuItem(title: "检查更新…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.target = self
+        menu.addItem(updateItem)
+
         menu.addItem(.separator())
 
         let delegate = NSApp.delegate as? AppDelegate
@@ -233,6 +237,10 @@ class PetContainerView: NSView {
         menu.addItem(quitItem)
 
         NSMenu.popUpContextMenu(menu, with: event, for: self)
+    }
+
+    @objc private func checkForUpdates() {
+        (NSApp.delegate as? AppDelegate)?.checkForUpdates()
     }
 
     @objc private func showResizeSlider() {

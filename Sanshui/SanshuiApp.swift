@@ -1,6 +1,7 @@
 import SwiftUI
 import AppKit
 import ServiceManagement
+import Sparkle
 
 @main
 struct SanshuiApp: App {
@@ -10,9 +11,17 @@ struct SanshuiApp: App {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var petWindowController: PetWindowController?
+    private var updaterController: SPUStandardUpdaterController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+
+        // 初始化 Sparkle 自动更新（每小时检查一次，见 Info.plist SUScheduledCheckInterval）
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
 
         petWindowController = PetWindowController()
         petWindowController?.showWindow(nil)
@@ -41,6 +50,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 sender.state = .on
             }
         }
+    }
+
+    func checkForUpdates() {
+        updaterController?.checkForUpdates(nil)
     }
 
     func isLoginItemEnabled() -> Bool {
