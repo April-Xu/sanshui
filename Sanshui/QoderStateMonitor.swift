@@ -106,17 +106,15 @@ class QoderStateMonitor {
                 return .failed
             }
         }
-        // 等待批准
+        // prompting = 用户刚发消息，Qoder 显示 "Working..."，还没开始输出
         for line in lines.reversed() {
-            if line.contains("waiting_for_user") || line.contains("waitingForApproval")
-                || line.contains("HUMAN_IN_THE_LOOP") {
+            if line.contains("-> prompting") || line.contains("\"state\":\"prompting\"") {
                 return .waiting
             }
         }
-        // 精准匹配"正在工作"的信号，排除 UI 交互日志
+        // streaming 中
         if Date() > blockQuestUntil {
             for line in lines.reversed() {
-                // ACPBlocksService 明确处于 streaming 状态才触发
                 if line.contains("ACPBlocksService.processProgress")
                     && line.contains("\"state\":\"streaming\"") {
                     return .streaming
@@ -136,11 +134,12 @@ class QoderStateMonitor {
                Date().timeIntervalSince(lastWaitingFlash) > 20,
                Double.random(in: 0...1) < waitingFlashChance {
                 lastWaitingFlash = Date()
-                onStateChange?(.waiting)
+                transition(to: .waiting, from: "random-flash")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
-                    guard self?.currentState == .waiting else { return }
-                    self?.currentState = .coding
-                    self?.onStateChange?(.coding)
+                    // 只要还在 waiting（没被其他事件打断）就强制回 coding
+                    if self?.currentState == .waiting {
+                        self?.transition(to: .coding, from: "random-flash-end")
+                    }
                 }
                 return
             }
