@@ -1,5 +1,5 @@
 {
-  "version": "1.5.7",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.7/Sanshui-1.5.7.dmg",
-  "notes": "• 修复 streaming 时 token 显示为 0\n• jumping 动画和 token 气泡同时结束（均延长至 3.5s）"
+  "version": "1.5.8",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.8/Sanshui-1.5.8.dmg",
+  "notes": "• 检查更新浮层移到宠物上方，显示检查/下载/安装状态\n• 修复点击无反应（NSAlert 替换为自定义浮层）\n• 错误信息就地显示，3秒自动关"
 }
