@@ -1,5 +1,5 @@
 {
-  "version": "1.5.4",
-  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.4/Sanshui-1.5.4.dmg",
-  "notes": "修复更新弹窗按钮无法点击（main thread 阻塞问题）"
+  "version": "1.5.5",
+  "url": "https://github.com/April-Xu/sanshui/releases/download/v1.5.5/Sanshui-1.5.5.dmg",
+  "notes": "• 修复更新后仍显示新版本（版本号未同步）\n• 检查/下载进度状态可视化\n• 已是最新版本也给提示\n• 修复更新弹窗按钮无法点击"
 }
